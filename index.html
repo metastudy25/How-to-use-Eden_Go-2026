@@ -3,478 +3,206 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>이든X학원 · AI 학습 가이드</title>
+<title>이든X학원 · Gemini Notebook 활용 질문 가이드 v2</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+  body { font-family:'Noto Sans KR','Malgun Gothic',sans-serif; font-size:9pt; color:#1a1a1a; background:#fff; }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-/* ══════════════════════════════════════
-   CSS 변수
-══════════════════════════════════════ */
-:root {
-  --navy:    #1a3a6b;
-  --navy2:   #0f2a55;
-  --orange:  #e05a1e;
-  --gray-bg: #f0f4f8;
-  --border:  #e0e5ee;
-  --text:    #1a1a2e;
-  --muted:   #8a94a6;
-  --radius:  14px;
-  --font:    'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
-}
-
-/* ══════════════════════════════════════
-   로그인 화면
-══════════════════════════════════════ */
-#login-screen {
-  font-family: var(--font);
-  background: linear-gradient(145deg, #dde8f8 0%, #f2ede6 100%);
-  min-height: 100vh; min-height: 100dvh;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding: 20px;
-}
-.login-card {
-  background: #fff; border-radius: 24px;
-  box-shadow: 0 12px 48px rgba(26,58,107,0.15);
-  padding: clamp(28px,5vw,44px) clamp(24px,5vw,40px);
-  width: 100%; max-width: 460px;
-}
-.logo { text-align: center; margin-bottom: 6px; }
-.logo-icon { font-size: clamp(36px,8vw,48px); display: block; margin-bottom: 8px; }
-.logo-main { font-size: clamp(22px,5vw,26px); font-weight: 900; color: var(--navy); letter-spacing: -0.5px; }
-.logo-main em { color: var(--orange); font-style: normal; }
-.logo-sub { font-size: clamp(12px,2.5vw,14px); color: var(--muted); margin-top: 6px; }
-.l-divider { border: none; border-top: 1px solid #eef0f4; margin: 20px 0; }
-.step-label {
-  font-size: clamp(12px,2.5vw,13px); font-weight: 700; color: var(--navy);
-  margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
-}
-.step-label .num {
-  background: var(--navy); color: #fff; width: 20px; height: 20px;
-  border-radius: 50%; font-size: 11px;
-  display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-input[type=text], input[type=password] {
-  width: 100%; padding: clamp(12px,3vw,15px) clamp(14px,3vw,18px);
-  border: 1.5px solid var(--border); border-radius: var(--radius);
-  font-size: clamp(15px,3.5vw,17px); font-family: var(--font);
-  outline: none; background: var(--gray-bg); color: var(--text);
-  transition: border .2s, box-shadow .2s; margin-bottom: 16px;
-  -webkit-appearance: none;
-}
-input:focus { border-color: var(--navy); background: #fff; box-shadow: 0 0 0 4px rgba(26,58,107,.09); }
-input::placeholder { color: #ccc; }
-.l-btn {
-  width: 100%; padding: clamp(13px,3vw,16px);
-  background: var(--navy); color: #fff; border: none; border-radius: var(--radius);
-  font-size: clamp(16px,3.5vw,18px); font-weight: 700; cursor: pointer;
-  transition: background .2s, transform .1s; font-family: var(--font);
-  touch-action: manipulation; letter-spacing: -0.3px;
-}
-.l-btn:hover  { background: var(--navy2); }
-.l-btn:active { transform: scale(.98); }
-.l-btn:disabled { background: #b0bdd0; cursor: not-allowed; }
-.l-btn-ghost {
-  background: none; color: var(--muted); border: 1.5px solid var(--border);
-  border-radius: 10px; font-size: clamp(12px,2.5vw,13px);
-  padding: 9px 18px; cursor: pointer; font-family: var(--font);
-  margin-top: 12px; transition: all .15s; display: inline-block;
-}
-.l-btn-ghost:hover { color: #444; border-color: #aaa; }
-.l-msg {
-  font-size: clamp(13px,3vw,14px); padding: 12px 16px; border-radius: 10px;
-  margin-bottom: 16px; display: none; line-height: 1.6;
-}
-.l-msg.err     { background:#fff0f0; color:#c0001a; border:1px solid #ffc8c8; display:block; }
-.l-msg.loading { background:#f0f4ff; color:var(--navy); border:1px solid #c8d5f0; display:block; }
-#sec-pw { display:none; }
-.l-avatar {
-  width: clamp(52px,12vw,64px); height: clamp(52px,12vw,64px);
-  border-radius: 50%; background: #e4ecf8;
-  display: flex; align-items: center; justify-content: center;
-  font-size: clamp(20px,5vw,26px); font-weight: 900; color: var(--navy);
-  margin: 0 auto 12px; border: 3px solid #c5d5ee;
-}
-.ret-name { font-size: clamp(16px,4vw,20px); font-weight: 700; color: var(--navy); text-align: center; margin-bottom: 4px; }
-.ret-sub  { font-size: clamp(12px,2.5vw,13px); color: var(--muted); text-align: center; margin-bottom: 20px; }
-.login-footer { font-size: 11px; color: #c0c8d8; text-align: center; margin-top: 18px; }
-
-/* ══════════════════════════════════════
-   가이드 화면 공통
-══════════════════════════════════════ */
-#guide-screen {
-  display: none;
-  font-family: var(--font);
-  min-height: 100vh;
-}
-
-/* 툴바 */
-.guide-toolbar {
-  position: sticky; top: 0; z-index: 200;
-  background: var(--navy);
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 20px;
-  box-shadow: 0 3px 12px rgba(0,0,0,0.25);
-}
-.tb-left { display: flex; align-items: center; gap: 10px; }
-.tb-avatar {
-  width: 36px; height: 36px; border-radius: 50%;
-  background: rgba(255,255,255,0.2); color: #fff;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px; font-weight: 700; flex-shrink: 0;
-}
-.tb-name { font-size: 15px; font-weight: 700; color: #fff; }
-.tb-sub  { font-size: 11px; color: rgba(255,255,255,0.65); margin-top: 1px; }
-.tb-right { display: flex; gap: 8px; }
-.tb-btn {
-  background: rgba(255,255,255,0.15); color: #fff;
-  border: 1px solid rgba(255,255,255,0.25); border-radius: 8px;
-  font-size: 13px; padding: 7px 14px; cursor: pointer;
-  font-family: var(--font); transition: background .15s; white-space: nowrap;
-}
-.tb-btn:hover { background: rgba(255,255,255,0.28); }
-.tb-btn.print { background: var(--orange); border-color: var(--orange); }
-.tb-btn.print:hover { background: #c04a0e; }
-
-/* ══════════════════════════════════════
-   PC (≥ 900px) — A4 인쇄 레이아웃
-══════════════════════════════════════ */
-@media (min-width: 900px) {
-  #guide-screen { background: #d8dde8; }
-  .guide-wrap { padding: 24px 20px; }
-  .page {
-    width: 210mm; min-height: 297mm;
-    background: #fff; margin: 0 auto 24px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.18);
-    padding: 10mm 10mm 8mm;
-    font-size: 9pt; color: #1a1a1a;
-    page-break-after: always;
+  @page { size:A4; margin:12mm 10mm; }
+  @media print {
+    body { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .page { page-break-after:always; }
+    .page:last-child { page-break-after:avoid; }
+    .no-print { display:none !important; }
   }
-  .page:last-child { page-break-after: avoid; margin-bottom: 0; }
-}
-
-/* ══════════════════════════════════════
-   태블릿 (< 900px) — 완전 반응형 카드
-══════════════════════════════════════ */
-@media (max-width: 899px) {
-  #guide-screen { background: #eef2f8; }
-  .guide-wrap { padding: 16px 12px; }
-
-  .page {
-    background: #fff; border-radius: 16px;
-    box-shadow: 0 3px 16px rgba(26,58,107,0.10);
-    margin: 0 auto 20px; padding: 20px 16px;
-    width: 100%; border: none;
+  @media screen {
+    body { background:#e0e4ec; padding:20px; }
+    .page {
+      width:210mm; min-height:297mm; background:#fff;
+      margin:0 auto 24px;
+      box-shadow:0 4px 20px rgba(0,0,0,0.15);
+      padding:10mm 10mm 8mm;
+    }
   }
 
-  /* 헤더 */
+  /* ── 헤더 ── */
   .page-header {
-    flex-direction: column; gap: 6px;
-    text-align: center; padding-bottom: 12px;
-    margin-bottom: 14px;
+    display:flex; align-items:center; justify-content:space-between;
+    border-bottom:2.5px solid #1a3a6b; padding-bottom:6px; margin-bottom:10px;
   }
-  .school-name { font-size: 17px !important; font-weight: 900 !important; }
-  .guide-title { font-size: 13px !important; color: #555 !important; }
-  .page-num { font-size: 11px !important; color: #aaa !important; }
+  .school-name { font-size:13pt; font-weight:900; color:#1a3a6b; }
+  .school-name span { color:#e05a1e; }
+  .guide-title { font-size:9.5pt; font-weight:700; color:#1a3a6b; }
+  .page-num { font-size:8pt; color:#999; }
 
-  /* 3원칙 박스 */
-  .rule-box {
-    flex-direction: column !important; gap: 10px !important;
-    padding: 14px 16px !important; border-radius: 12px !important;
-    margin-bottom: 16px !important;
+  /* ── 특성 안내 박스 ── */
+  .notice-box {
+    background:#f0f6ff; border:1.5px solid #4a7cc9; border-radius:7px;
+    padding:7px 11px; margin-bottom:9px;
+    display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px;
   }
-  .rule-label {
-    font-size: 13px !important; font-weight: 900 !important;
-    border-right: none !important; border-bottom: 1px solid #4a7cc9;
-    padding-right: 0 !important; padding-bottom: 8px !important;
-  }
-  .rules { flex-direction: column !important; gap: 6px !important; }
-  .rule-item { font-size: 13px !important; line-height: 1.7 !important; }
+  .notice-item { font-size:7.5pt; color:#1a3a6b; line-height:1.6; }
+  .notice-item strong { display:block; font-size:8pt; margin-bottom:2px; }
+  .notice-item.ok   strong { color:#006d2e; }
+  .notice-item.warn strong { color:#b85c00; }
+  .notice-item.no   strong { color:#cc0000; }
 
-  /* 섹션 헤더 */
+  /* ── 섹션 ── */
+  .section { margin-bottom:8px; }
   .section-header {
-    padding-left: 12px !important; margin-bottom: 12px !important;
-    border-left-width: 5px !important;
+    display:flex; align-items:center; gap:7px;
+    border-left:4px solid #1a3a6b; padding-left:8px;
+    margin-bottom:5px;
   }
-  .section-name { font-size: 16px !important; font-weight: 900 !important; }
-  .section-sub  { font-size: 11px !important; flex-wrap: wrap; }
-  .section-count { font-size: 11px !important; }
+  .section-header.ko { border-left-color:#1a3a6b; }
+  .section-header.en { border-left-color:#0f6e56; }
+  .section-header.ma { border-left-color:#b85c00; }
+  .section-header.so { border-left-color:#7b3fa0; }
+  .section-header.sc { border-left-color:#b00020; }
+  .section-header.ts { border-left-color:#006d4e; }
+  .section-header.hs { border-left-color:#b8860b; }
+  .section-name  { font-size:10pt; font-weight:900; color:#1a1a1a; }
+  .section-sub   { font-size:7pt; color:#777; background:#f2f2f2; padding:1px 7px; border-radius:10px; }
+  .section-count { margin-left:auto; font-size:7pt; color:#bbb; }
 
-  /* 질문 그리드 — 태블릿은 1컬럼 */
-  .q-grid, .q-grid.wide, .two-col {
-    grid-template-columns: 1fr !important;
-    gap: 10px !important;
-  }
+  /* ── 질문 그리드 ── */
+  .q-grid      { display:grid; grid-template-columns:1fr 1fr;     gap:4px 10px; }
+  .q-grid.wide { display:grid; grid-template-columns:1fr 1fr 1fr; gap:4px 8px;  }
 
-  /* 질문 아이템 */
   .q-item {
-    font-size: 14px !important;
-    line-height: 1.9 !important;
-    padding: 10px 12px 10px 36px !important;
-    background: #f8fafc !important;
-    border-radius: 8px !important;
-    border: 1px solid #edf0f5 !important;
-    position: relative !important;
+    font-size:7.8pt; line-height:1.6; color:#222;
+    padding:4px 6px 4px 22px; position:relative;
+    border-left:2px solid transparent; border-radius:3px;
   }
+  .q-item:hover { background:#f8fafc; }
   .q-item::before {
-    top: 12px !important; left: 14px !important;
-    width: 6px !important; height: 6px !important;
+    content:attr(data-num); position:absolute; left:5px; top:5px;
+    font-size:7pt; color:#ccc; width:12px; text-align:right;
   }
+
+  /* 태그 */
   .tag {
-    font-size: 10px !important; padding: 2px 7px !important;
-    border-radius: 5px !important; margin-right: 4px !important;
-    vertical-align: middle !important;
+    display:inline-block; font-size:6.5pt; font-weight:700;
+    padding:1px 5px; border-radius:3px; margin-right:3px; vertical-align:middle;
   }
+  .tag.s { background:#ddeaff; color:#1a3a6b; }   /* 수능 */
+  .tag.n { background:#dff5ec; color:#0a5c3d; }   /* 내신 */
+  .tag.b { background:#f0e8ff; color:#5b2da0; }   /* 공통 */
 
-  /* 팁 박스 */
-  .tip-row {
-    grid-template-columns: 1fr !important; gap: 10px !important;
-    margin-top: 14px !important;
-  }
-  .tip-box { padding: 14px 16px !important; border-radius: 10px !important; }
-  .tip-head { font-size: 12px !important; margin-bottom: 6px !important; }
-  .tip-body { font-size: 13px !important; line-height: 1.8 !important; }
+  /* 가능 여부 인디케이터 */
+  .q-item.ok   { border-left-color:#4caf50; }
+  .q-item.warn { border-left-color:#ff9800; }
 
-  /* 푸터 */
+  .divider { border:none; border-top:0.5px solid #e8e8e8; margin:6px 0; }
+
+  /* ── 2컬럼 ── */
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:0 14px; }
+
+  /* ── 푸터 ── */
   .page-footer {
-    flex-direction: column !important; gap: 8px !important;
-    align-items: flex-start !important; margin-top: 16px !important;
-    padding-top: 12px !important;
+    margin-top:7px; padding-top:5px; border-top:1px solid #e0e0e0;
+    display:flex; justify-content:space-between; align-items:center;
   }
-  .footer-l { font-size: 11px !important; }
-  .legend-item { font-size: 12px !important; }
-
-  /* 구분선 */
-  hr.divider { margin: 14px 0 !important; }
-
-  /* 섹션 간격 */
-  .section { margin-bottom: 20px !important; }
-
-  /* 과목 태그 색상 강화 */
-  .tag.s { background: #d4e4ff !important; color: #0d3080 !important; font-weight: 700 !important; }
-  .tag.n { background: #c8f0dc !important; color: #0a5c3d !important; font-weight: 700 !important; }
-}
-
-/* ══════════════════════════════════════
-   인쇄 스타일
-══════════════════════════════════════ */
-@page { size: A4; margin: 12mm 10mm; }
-@media print {
-  #login-screen, .guide-toolbar { display: none !important; }
-  #guide-screen { display: block !important; background: #fff !important; }
-  .guide-wrap { padding: 0 !important; }
-  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .page {
-    width: 210mm !important; min-height: 297mm !important;
-    box-shadow: none !important; border-radius: 0 !important;
-    margin: 0 !important; padding: 10mm 10mm 8mm !important;
-    font-size: 9pt !important; background: #fff !important;
-    border: none !important; page-break-after: always;
-  }
-  .page:last-child { page-break-after: avoid; }
-  .q-item {
-    background: transparent !important; border: none !important;
-    padding: 0 0 0 14px !important; font-size: 7.8pt !important;
-    line-height: 1.55 !important; border-radius: 0 !important;
-  }
-  .q-grid, .q-grid.wide { grid-template-columns: 1fr 1fr !important; }
-  .q-grid.wide { grid-template-columns: 1fr 1fr 1fr !important; }
-  .two-col { grid-template-columns: 1fr 1fr !important; }
-  .tip-row { grid-template-columns: 1fr 1fr 1fr !important; }
-}
-
-/* ══════════════════════════════════════
-   가이드 원본 스타일 (PC 용)
-══════════════════════════════════════ */
-* { box-sizing: border-box; }
-body { font-family: var(--font); font-size: 9pt; color: #1a1a1a; background: #fff; }
-@media (min-width: 900px) {
-  .page-header { display:flex; align-items:center; justify-content:space-between; border-bottom:2px solid #1a3a6b; padding-bottom:5px; margin-bottom:8px; }
-  .school-name { font-size:13pt; font-weight:700; color:#1a3a6b; letter-spacing:-0.3px; }
-  .school-name span { color:#e05a1e; }
-  .guide-title { font-size:10pt; font-weight:700; color:#1a3a6b; }
-  .page-num { font-size:8pt; color:#888; }
-  .rule-box { background:#eef4ff; border:1.5px solid #4a7cc9; border-radius:6px; padding:6px 10px; margin-bottom:8px; display:flex; align-items:center; gap:10px; }
-  .rule-label { font-size:8.5pt; font-weight:700; color:#1a3a6b; white-space:nowrap; border-right:1px solid #4a7cc9; padding-right:10px; margin-right:4px; }
-  .rules { display:flex; gap:14px; flex-wrap:wrap; }
-  .rule-item { font-size:8pt; color:#1a3a6b; display:flex; align-items:center; gap:4px; }
-  .rule-item::before { content:"✓"; color:#e05a1e; font-weight:700; }
-  .section { margin-bottom:7px; }
-  .section-header { display:flex; align-items:center; gap:7px; margin-bottom:4px; border-left:4px solid #1a3a6b; padding-left:7px; }
-  .section-header.ko { border-left-color:#1a3a6b; }
-  .section-header.en { border-left-color:#0f6e56; }
-  .section-header.ma { border-left-color:#b85c00; }
-  .section-header.so { border-left-color:#7b3fa0; }
-  .section-header.sc { border-left-color:#b00020; }
-  .section-header.ts { border-left-color:#006d4e; }
-  .section-header.hs { border-left-color:#b8860b; }
-  .section-name { font-size:10pt; font-weight:700; color:#1a1a1a; }
-  .section-sub { font-size:7.5pt; color:#666; background:#f0f0f0; padding:1px 7px; border-radius:10px; }
-  .section-count { margin-left:auto; font-size:7pt; color:#999; }
-  .q-grid { display:grid; grid-template-columns:1fr 1fr; gap:4px 10px; }
-  .q-grid.wide { grid-template-columns:1fr 1fr 1fr; }
-  .q-item { font-size:7.8pt; line-height:1.55; color:#2a2a2a; padding-left:14px; position:relative; }
-  .q-item::before { content:attr(data-num); position:absolute; left:0; top:0; font-size:7pt; color:#aaa; width:12px; text-align:right; }
-  .tag { display:inline-block; font-size:6.5pt; font-weight:700; padding:0 4px; border-radius:3px; margin-right:2px; vertical-align:middle; }
-  .tag.s { background:#ddeaff; color:#1a3a6b; }
-  .tag.n { background:#dff5ec; color:#0a5c3d; }
-  .divider { border:none; border-top:0.5px solid #ddd; margin:5px 0; }
-  .tip-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px; margin-top:6px; }
-  .tip-box { background:#fafafa; border:1px solid #e0e0e0; border-radius:5px; padding:5px 8px; }
-  .tip-box.warn { border-color:#f5c0a0; background:#fff7f3; }
-  .tip-box.good { border-color:#a0d4b8; background:#f3fdf7; }
-  .tip-box.note { border-color:#b0c8f0; background:#f3f7ff; }
-  .tip-head { font-size:7.5pt; font-weight:700; margin-bottom:3px; color:#333; }
-  .tip-body { font-size:7.2pt; color:#444; line-height:1.5; }
-  .tip-body code { font-family:monospace; font-size:7pt; background:rgba(0,0,0,.06); padding:0 3px; border-radius:2px; }
-  .page-footer { margin-top:6px; border-top:1px solid #ddd; padding-top:4px; display:flex; justify-content:space-between; align-items:center; }
-  .footer-l { font-size:7pt; color:#aaa; }
-  .legend { display:flex; gap:10px; }
+  .footer-l { font-size:7pt; color:#bbb; }
+  .legend { display:flex; gap:12px; align-items:center; }
   .legend-item { font-size:7pt; color:#666; display:flex; align-items:center; gap:3px; }
-  .legend-dot { width:8px; height:8px; border-radius:2px; }
-  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:0 12px; }
-}
+  .legend-dot  { width:8px; height:8px; border-radius:2px; }
+  .legend-bar  { width:10px; height:8px; border-radius:1px; }
 
-/* 태블릿에서도 필요한 스타일 */
-@media (max-width: 899px) {
-  .page-header { display:flex; flex-wrap:wrap; align-items:center; border-bottom:3px solid #1a3a6b; padding-bottom:10px; margin-bottom:14px; }
-  .school-name { font-size:17px; font-weight:900; color:#1a3a6b; }
-  .school-name span { color:#e05a1e; }
-  .rule-box { background:#eef4ff; border:2px solid #4a7cc9; border-radius:12px; padding:14px 16px; margin-bottom:16px; display:flex; }
-  .rule-item::before { content:"✓ "; color:#e05a1e; font-weight:700; }
-  .section-header { display:flex; align-items:center; gap:8px; border-left:5px solid #1a3a6b; padding-left:12px; margin-bottom:12px; }
-  .section-header.ko { border-left-color:#1a3a6b; }
-  .section-header.en { border-left-color:#0f6e56; }
-  .section-header.ma { border-left-color:#b85c00; }
-  .section-header.so { border-left-color:#7b3fa0; }
-  .section-header.sc { border-left-color:#b00020; }
-  .section-header.ts { border-left-color:#006d4e; }
-  .section-header.hs { border-left-color:#b8860b; }
-  .section-sub { font-size:11px; color:#666; background:#f0f0f0; padding:2px 8px; border-radius:10px; }
-  .section-count { margin-left:auto; font-size:12px; color:#999; }
-  .q-grid { display:grid; grid-template-columns:1fr; gap:10px; }
-  .q-grid.wide { display:grid; grid-template-columns:1fr; gap:10px; }
-  .q-item { display:block; font-size:14px; line-height:1.9; color:#2a2a2a; padding:10px 12px 10px 36px; background:#f8fafc; border-radius:8px; border:1px solid #edf0f5; position:relative; }
-  .q-item::before { content:attr(data-num); position:absolute; left:12px; top:12px; font-size:11px; color:#bbb; }
-  .tag { display:inline-block; font-size:10px; font-weight:700; padding:2px 7px; border-radius:5px; margin-right:4px; vertical-align:middle; }
-  .tag.s { background:#d4e4ff; color:#0d3080; }
-  .tag.n { background:#c8f0dc; color:#0a5c3d; }
-  .divider { border:none; border-top:1px solid #e8ecf2; margin:14px 0; }
-  .tip-row { display:grid; grid-template-columns:1fr; gap:10px; margin-top:14px; }
-  .tip-box { border-radius:10px; padding:14px 16px; }
-  .tip-box.warn { border:1.5px solid #f5c0a0; background:#fff7f3; }
-  .tip-box.good { border:1.5px solid #a0d4b8; background:#f3fdf7; }
-  .tip-box.note { border:1.5px solid #b0c8f0; background:#f3f7ff; }
-  .tip-head { font-size:13px; font-weight:700; margin-bottom:6px; color:#333; }
-  .tip-body { font-size:13px; color:#444; line-height:1.8; }
-  .tip-body code { font-family:monospace; font-size:12px; background:rgba(0,0,0,.06); padding:1px 5px; border-radius:4px; }
-  .page-footer { margin-top:16px; border-top:1px solid #e0e4ec; padding-top:12px; display:flex; flex-wrap:wrap; gap:8px; justify-content:space-between; align-items:center; }
-  .footer-l { font-size:11px; color:#aaa; }
-  .legend { display:flex; gap:12px; }
-  .legend-item { font-size:12px; color:#666; display:flex; align-items:center; gap:4px; }
-  .legend-dot { width:10px; height:10px; border-radius:3px; }
-  .two-col { display:grid; grid-template-columns:1fr; gap:0; }
-  .section { margin-bottom:20px; }
-}
+  /* ── 인쇄 버튼 ── */
+  .print-bar {
+    position:fixed; bottom:20px; right:20px; z-index:999;
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .print-btn {
+    background:#1a3a6b; color:#fff; border:none;
+    border-radius:10px; padding:10px 18px;
+    font-size:13px; font-weight:700; cursor:pointer;
+    box-shadow:0 4px 12px rgba(26,58,107,0.3);
+    font-family:inherit;
+  }
+  .print-btn:hover { background:#0f2a55; }
+
+  /* 질문 팁 박스 */
+  .tip-section {
+    background:#fffaf2; border:1px solid #ffd98a; border-radius:6px;
+    padding:6px 10px; margin-bottom:8px;
+    display:grid; grid-template-columns:1fr 1fr; gap:4px 10px;
+  }
+  .tip-item { font-size:7.5pt; color:#7a4a00; line-height:1.6; }
+  .tip-item strong { color:#e05a1e; }
+
+  /* 페이지 부제목 */
+  .page-sub {
+    font-size:8pt; color:#888; text-align:center;
+    margin-bottom:8px; font-style:italic;
+  }
 </style>
 </head>
 <body>
 
-<!-- ══════════ 로그인 ══════════ -->
-<div id="login-screen">
-  <div class="login-card">
-    <div class="logo">
-      <span class="logo-icon">📚</span>
-      <div class="logo-main">이든<em>X</em>학원</div>
-      <div class="logo-sub">이든관리형학습센터 · AI 학습 가이드</div>
-    </div>
-    <hr class="l-divider">
-    <div class="l-msg" id="l-msg"></div>
-    <div id="sec-first">
-      <div class="step-label"><span class="num">1</span> 이름을 입력해주세요</div>
-      <input type="text" id="inp-name" placeholder="예) 홍길동" maxlength="12" autocomplete="off"
-        onkeydown="if(event.key==='Enter') document.getElementById('inp-pw1').focus()">
-      <div class="step-label"><span class="num">2</span> 비밀번호를 입력해주세요</div>
-      <input type="password" id="inp-pw1" placeholder="비밀번호 입력" maxlength="10"
-        autocomplete="off" inputmode="numeric"
-        onkeydown="if(event.key==='Enter') doLogin()">
-      <button class="l-btn" id="btn-login1" onclick="doLogin()">입장하기</button>
-    </div>
-    <div id="sec-pw">
-      <div class="l-avatar" id="l-avatar"></div>
-      <div class="ret-name" id="ret-name"></div>
-      <div class="ret-sub">비밀번호를 입력하면 바로 입장할 수 있어요</div>
-      <input type="password" id="inp-pw2" placeholder="비밀번호 입력" maxlength="10"
-        autocomplete="off" inputmode="numeric"
-        onkeydown="if(event.key==='Enter') doLoginReturn()">
-      <button class="l-btn" id="btn-login2" onclick="doLoginReturn()">입장하기</button>
-      <div style="text-align:center">
-        <button class="l-btn-ghost" onclick="switchFirst()">다른 계정으로 로그인</button>
-      </div>
-    </div>
-  </div>
-  <div class="login-footer">이든X학원 · 이든관리형학습센터 © 2026</div>
+<div class="print-bar no-print">
+  <button class="print-btn" onclick="window.print()">🖨️ A4 인쇄</button>
 </div>
 
-<!-- ══════════ 가이드 ══════════ -->
-<div id="guide-screen">
-  <div class="guide-toolbar">
-    <div class="tb-left">
-      <div class="tb-avatar" id="tb-avatar"></div>
-      <div>
-        <div class="tb-name" id="tb-name">학생</div>
-        <div class="tb-sub">이든X학원 · Gemini Notebook 활용 가이드</div>
-      </div>
-    </div>
-    <div class="tb-right">
-      <button class="tb-btn print" onclick="window.print()">🖨️ 인쇄</button>
-      <button class="tb-btn" onclick="doLogout()">로그아웃</button>
-    </div>
-  </div>
-  <div class="guide-wrap">
-<!-- ===== PAGE 1 : 국어 + 영어 ===== -->
+<!-- ══════════════════════════════════════════════════
+     PAGE 1 : 가이드 원칙 + 국어 + 영어
+══════════════════════════════════════════════════ -->
 <div class="page">
   <div class="page-header">
     <div class="school-name">이든<span>X</span>학원 · 이든관리형학습센터</div>
-    <div class="guide-title">Gemini Notebook 활용 질문 예시 가이드</div>
+    <div class="guide-title">Gemini Notebook 활용 질문 가이드 — 사실 기반 수정판</div>
     <div class="page-num">1 / 4</div>
   </div>
 
-  <div class="rule-box">
-    <div class="rule-label">📌 질문 필수 3원칙</div>
-    <div class="rules">
-      <div class="rule-item">이 노트북 자료만 근거로 답해줘</div>
-      <div class="rule-item">자료에 없는 내용은 절대 만들지 마</div>
-      <div class="rule-item">기출 출처(연도·시험명)를 반드시 표기해줘</div>
-      <div class="rule-item">❌ "이 문제 답이 뭐야?" → ✅ "내가 틀린 이유가 뭔 것 같아?"</div>
+  <!-- Gemini Notebook 특성 안내 -->
+  <div class="notice-box">
+    <div class="notice-item ok">
+      <strong>✅ 잘 되는 질문</strong>
+      업로드된 자료에서 내용 찾기·요약·비교·분류. "이 자료에서 ~를 찾아줘" 형태. 출처 인용 자동 제공.
     </div>
+    <div class="notice-item warn">
+      <strong>⚠️ 조건부 가능 질문</strong>
+      자료가 충분할 때만 가능한 경향 분석·유형 분류. 반드시 "이 자료에서만" 조건 명시 필요.
+    </div>
+    <div class="notice-item no">
+      <strong>❌ 불가능한 질문</strong>
+      자료 밖 풀이법 창작, 등급컷 예측, 업로드 안 된 정보 요청. 이런 질문은 ChatGPT나 Claude 사용.
+    </div>
+  </div>
+
+  <!-- 질문 작성 팁 -->
+  <div class="tip-section">
+    <div class="tip-item">❌ <strong>"장문 독해 시간 절약법 알려줘"</strong> → 자료 밖 전략 요청 (불가)</div>
+    <div class="tip-item">✅ <strong>"이 자료에서 41~42번 지문의 주제 유형을 찾아서 정리해줘"</strong> (가능)</div>
+    <div class="tip-item">❌ <strong>"최근 5년 수능 1등급컷을 알려줘"</strong> → 자료에 없는 통계 (불가)</div>
+    <div class="tip-item">✅ <strong>"업로드된 기출 자료에서 빈칸 추론 유형을 분류해줘"</strong> (가능)</div>
   </div>
 
   <!-- 국어 -->
   <div class="section">
     <div class="section-header ko">
       <div class="section-name">📘 국어</div>
-      <div class="section-sub">독서·문학·언어와 매체·화법과 작문</div>
+      <div class="section-sub">독서·문학·언어와매체·화법과작문</div>
       <div class="section-count">15문항</div>
     </div>
     <div class="q-grid">
-      <div class="q-item" data-num="1"><span class="tag s">수능</span>최근 10년 수능 국어 비문학 '과학기술' 제재 출제 횟수와 주요 출제 포인트를 연도별 출처와 함께 정리해줘</div>
-      <div class="q-item" data-num="2"><span class="tag s">수능</span>수능 국어 문학 현대시 출제 시 가장 자주 나오는 문제 유형 5가지를 기출 예시와 함께 알려줘</div>
-      <div class="q-item" data-num="3"><span class="tag s">수능</span>수능 언어와 매체 문법 문제에서 '음운 변동'이 출제된 모든 기출을 찾아서 유형별로 분류해줘</div>
-      <div class="q-item" data-num="4"><span class="tag s">수능</span>최근 5년 수능 화법과 작문에서 '토론' 지문의 출제 패턴과 정답 선지의 공통점을 분석해줘</div>
-      <div class="q-item" data-num="5"><span class="tag s">수능</span>수능 국어 1등급 컷이 가장 낮았던 해의 지문 특징과 킬러 문항 출제 의도를 분석해줘</div>
-      <div class="q-item" data-num="6"><span class="tag s">수능</span>수능 비문학에서 '법·경제' 제재 지문의 최근 10년 출제 경향과 핵심 독해 전략을 알려줘</div>
-      <div class="q-item" data-num="7"><span class="tag s">수능</span>2028 수능 국어 예시문항(화법과 언어·독서와 작문·문학)과 현행 기출의 유형 차이를 비교 분석해줘</div>
-      <div class="q-item" data-num="8"><span class="tag s">수능</span>수능 문학에서 고전소설이 출제될 때 반드시 등장하는 발문 유형과 오답 패턴을 기출 근거로 정리해줘</div>
-      <div class="q-item" data-num="9"><span class="tag n">내신</span>고1 공통국어 교과서 '설득하는 글쓰기' 단원의 핵심 개념과 내신 서술형 예상 문제 5개를 만들어줘</div>
-      <div class="q-item" data-num="10"><span class="tag n">내신</span>고2 문학 교과서 현대시 단원에서 내신 시험에 자주 출제되는 감상 포인트와 4지선다 문제 10개를 생성해줘</div>
-      <div class="q-item" data-num="11"><span class="tag n">내신</span>언어와 매체 '매체 언어의 특성' 단원에서 내신 서술형 자주 나오는 유형과 모범 답안 작성 방법을 알려줘</div>
-      <div class="q-item" data-num="12"><span class="tag n">내신</span>고1 국어 '독서의 방법' 단원 핵심 내용을 내신 5등급제 기준 A등급 서술형 답안 전략과 함께 정리해줘</div>
-      <div class="q-item" data-num="13"><span class="tag n">내신</span>화법과 작문 교과서 '발표하기' 단원에서 선생님이 자주 출제하는 유형과 고득점 서술형 답안 예시를 만들어줘</div>
-      <div class="q-item" data-num="14"><span class="tag n">내신</span>고3 내신 문학 시험에서 수능 기출 작품이 교과서에 실린 경우, 내신과 수능 문제의 출제 방식 차이를 비교해줘</div>
-      <div class="q-item" data-num="15"><span class="tag n">내신</span>고2 독서 교과서 '비판적 읽기' 단원 핵심 개념을 플래시카드 20개로 만들고 내신 예상 문제 5개도 함께 생성해줘</div>
+      <div class="q-item ok"  data-num="1"><span class="tag s">수능</span>업로드된 비문학 기출 지문 중 '과학기술' 제재 지문을 모두 찾아서 출처(연도·번호)와 함께 목록으로 정리해줘</div>
+      <div class="q-item ok"  data-num="2"><span class="tag s">수능</span>업로드된 현대시 기출 문제에서 발문(물음) 유형을 분류해줘. 어떤 발문이 가장 많이 나왔는지 출처와 함께 알려줘</div>
+      <div class="q-item ok"  data-num="3"><span class="tag s">수능</span>이 자료에서 '음운 변동'이 출제된 문제를 찾아서 연도·문항 번호와 함께 정리하고 어떤 음운 변동 유형인지 분류해줘</div>
+      <div class="q-item ok"  data-num="4"><span class="tag s">수능</span>업로드된 화법과 작문 기출에서 '토론' 지문이 나온 연도와 문항 번호를 찾아줘. 각 문제에서 무엇을 물었는지 요약해줘</div>
+      <div class="q-item ok"  data-num="5"><span class="tag s">수능</span>이 자료에서 고전소설 기출 문제를 모두 찾아서 출처와 함께 정리하고, 각 문제의 발문 유형을 비교해줘</div>
+      <div class="q-item ok"  data-num="6"><span class="tag s">수능</span>업로드된 자료에서 '법·경제' 제재 비문학 지문을 찾아줘. 각 지문의 핵심 소재와 출처를 함께 정리해줘</div>
+      <div class="q-item warn" data-num="7"><span class="tag s">수능</span>이 자료에 2028 수능 국어 예시문항이 포함되어 있다면, 기존 기출과 어떤 점이 다른지 비교해줘</div>
+      <div class="q-item ok"  data-num="8"><span class="tag s">수능</span>업로드된 문학 기출 오답 해설에서 오답 선지를 만드는 방식을 찾아줘. 어떤 패턴이 반복되는지 예시와 함께 정리해줘</div>
+      <div class="q-item ok"  data-num="9"><span class="tag n">내신</span>업로드된 국어 교과서 '설득하는 글쓰기' 단원 내용을 요약해줘. 핵심 개념과 예시를 찾아서 정리해줘</div>
+      <div class="q-item ok"  data-num="10"><span class="tag n">내신</span>이 자료에서 현대시 감상에 필요한 핵심 개념을 찾아줘. 교과서에 나온 예시 시와 함께 정리해줘</div>
+      <div class="q-item ok"  data-num="11"><span class="tag n">내신</span>업로드된 언어와 매체 교과서에서 '매체 언어의 특성' 부분을 찾아서 유형별로 정리해줘</div>
+      <div class="q-item ok"  data-num="12"><span class="tag n">내신</span>이 자료에서 '독서의 방법' 단원 내용을 찾아서 핵심 개념을 목록으로 정리해줘. 각 개념의 설명도 함께 요약해줘</div>
+      <div class="q-item ok"  data-num="13"><span class="tag n">내신</span>업로드된 화법과 작문 교과서에서 '발표하기' 단원을 찾아서 단계별 절차와 유의사항을 정리해줘</div>
+      <div class="q-item warn" data-num="14"><span class="tag n">내신</span>이 자료에서 수능 기출과 교과서에 동시에 수록된 문학 작품을 찾아줘. 어떤 작품이 있는지 목록으로 보여줘</div>
+      <div class="q-item ok"  data-num="15"><span class="tag n">내신</span>업로드된 교과서에서 '비판적 읽기' 관련 내용을 찾아서 핵심 개념과 단계를 정리해줘</div>
     </div>
   </div>
 
@@ -488,39 +216,42 @@ body { font-family: var(--font); font-size: 9pt; color: #1a1a1a; background: #ff
       <div class="section-count">15문항</div>
     </div>
     <div class="q-grid">
-      <div class="q-item" data-num="1"><span class="tag s">수능</span>최근 10년 수능 영어 빈칸 추론(31~34번) 정답이 되는 핵심 단어·표현 패턴을 연도별 출처와 함께 분석해줘</div>
-      <div class="q-item" data-num="2"><span class="tag s">수능</span>수능 영어 순서 배열(36~37번) 연결사 없이 논리적 흐름만으로 순서를 파악하는 전략을 기출 예시로 설명해줘</div>
-      <div class="q-item" data-num="3"><span class="tag s">수능</span>수능 영어 주제·제목 추론 문제(23~24번)에서 오답 선지가 만들어지는 패턴을 최근 5년 기출 분석으로 정리해줘</div>
-      <div class="q-item" data-num="4"><span class="tag s">수능</span>EBS 수능특강·수능완성 연계 지문 중 수능 본시험에서 변형 출제된 사례를 최근 3년치에서 찾아 변형 패턴을 분석해줘</div>
-      <div class="q-item" data-num="5"><span class="tag s">수능</span>수능 영어 장문 독해(41~42번, 43~45번)에서 시간을 절약하는 독해 순서와 정답 선지 공통 특징을 알려줘</div>
-      <div class="q-item" data-num="6"><span class="tag s">수능</span>수능 영어 어법 문제(29번)에서 최근 10년간 출제된 어법 포인트를 빈도순으로 정리하고 예문을 보여줘</div>
-      <div class="q-item" data-num="7"><span class="tag s">수능</span>수능 영어 함의 추론(31번) 문제에서 추상적 표현이 구체적 의미로 연결되는 출제 패턴을 기출 근거로 설명해줘</div>
-      <div class="q-item" data-num="8"><span class="tag s">수능</span>수능 영어 1등급과 2등급을 가르는 고난도 문항(빈칸·순서·문삽입)의 최근 5년 출제 포인트를 집중 분석해줘</div>
-      <div class="q-item" data-num="9"><span class="tag n">내신</span>고1 영어 교과서 1단원 본문에서 내신 시험에 자주 나오는 어휘·어법·내용 이해 문제 유형 10개를 만들어줘</div>
-      <div class="q-item" data-num="10"><span class="tag n">내신</span>고2 영어 교과서에서 서술형으로 자주 출제되는 영작문 유형과 감점 없이 쓰는 방법을 예시 답안과 함께 알려줘</div>
-      <div class="q-item" data-num="11"><span class="tag n">내신</span>고3 내신 영어에서 수능 기출 지문이 변형 출제될 때 바뀌는 패턴과 이를 대비하는 학습 방법을 알려줘</div>
-      <div class="q-item" data-num="12"><span class="tag n">내신</span>고1 영어 교과서 어휘 중 수능까지 연계되는 핵심 단어 50개를 플래시카드 형식으로 만들어줘</div>
-      <div class="q-item" data-num="13"><span class="tag n">내신</span>고2 영어 내신 시험 대비 독해 지문 분석형 서술 문제 예시 5개와 채점 기준을 함께 만들어줘</div>
-      <div class="q-item" data-num="14"><span class="tag n">내신</span>고1·2 영어 교과서 문법 단원에서 내신 서술형에 자주 나오는 문법 포인트와 틀리기 쉬운 오류 유형을 정리해줘</div>
-      <div class="q-item" data-num="15"><span class="tag n">내신</span>고3 영어 내신과 수능을 동시에 대비하는 단원별 학습 우선순위를 교과서 기준으로 정리하고 일주일 플랜도 만들어줘</div>
+      <div class="q-item ok"  data-num="1"><span class="tag s">수능</span>업로드된 수능 영어 기출에서 31~34번(빈칸 추론) 문제를 찾아서 정답 선지에 공통으로 쓰인 핵심 단어나 표현을 정리해줘</div>
+      <div class="q-item ok"  data-num="2"><span class="tag s">수능</span>이 자료에서 36~37번(순서 배열) 기출 문제를 찾아줘. 각 문제에서 단락 연결의 단서가 된 표현을 출처와 함께 정리해줘</div>
+      <div class="q-item ok"  data-num="3"><span class="tag s">수능</span>업로드된 기출에서 23~24번(주제·제목 추론) 오답 선지를 찾아서 오답이 어떤 방식으로 구성됐는지 비교해줘</div>
+      <div class="q-item ok"  data-num="4"><span class="tag s">수능</span>이 자료에서 수능특강·수능완성 지문과 수능 기출 지문이 내용상 연결되는 것을 찾아줘. 어떻게 연결되는지 설명해줘</div>
+      <div class="q-item ok"  data-num="5"><span class="tag s">수능</span>업로드된 41~45번(장문 독해) 기출 지문을 찾아서 각 지문의 주제와 문단 구조를 요약해줘</div>
+      <div class="q-item ok"  data-num="6"><span class="tag s">수능</span>이 자료에서 29번(어법) 기출 문제를 모두 찾아서 어떤 어법 포인트가 출제됐는지 출처와 함께 목록으로 정리해줘</div>
+      <div class="q-item ok"  data-num="7"><span class="tag s">수능</span>업로드된 기출에서 빈칸 추론 문제의 지문을 찾아줘. 빈칸 앞뒤 문장에서 반복되는 어휘나 표현 패턴이 있는지 정리해줘</div>
+      <div class="q-item ok"  data-num="8"><span class="tag s">수능</span>이 자료에서 고난도로 분류된 문제(빈칸·순서·문삽입)의 지문을 찾아서 공통된 주제 유형이 있는지 분석해줘</div>
+      <div class="q-item ok"  data-num="9"><span class="tag n">내신</span>업로드된 고1 영어 교과서 1단원 본문을 찾아서 핵심 어휘와 주요 문장 구조를 정리해줘</div>
+      <div class="q-item ok"  data-num="10"><span class="tag n">내신</span>이 자료에서 영어 교과서 서술형 활동 지시문을 찾아줘. 어떤 유형의 쓰기 활동이 포함되어 있는지 정리해줘</div>
+      <div class="q-item ok"  data-num="11"><span class="tag n">내신</span>업로드된 고3 영어 교과서 지문 중 수능 기출 지문과 소재가 겹치는 것을 찾아줘. 어떤 주제가 겹치는지 정리해줘</div>
+      <div class="q-item ok"  data-num="12"><span class="tag n">내신</span>이 자료에서 영어 교과서의 주요 어휘 목록을 찾아서 정리해줘. 수능 기출에서도 나온 어휘가 있으면 함께 표시해줘</div>
+      <div class="q-item ok"  data-num="13"><span class="tag n">내신</span>업로드된 교과서 독해 지문에서 핵심 문장(주제문·결론문)을 찾아서 각 지문별로 정리해줘</div>
+      <div class="q-item ok"  data-num="14"><span class="tag n">내신</span>이 자료에서 영어 교과서 문법 설명 부분을 찾아줘. 어떤 문법 항목이 다뤄지는지 단원별로 정리해줘</div>
+      <div class="q-item warn" data-num="15"><span class="tag n">내신</span>업로드된 자료에서 고1·2·3 교과서의 단원별 핵심 학습 목표를 찾아서 학년 순서로 정리해줘</div>
     </div>
   </div>
 
   <div class="page-footer">
-    <div class="footer-l">이든X학원 · 이든관리형학습센터 · AI 초격차 학습 시스템 · Gemini Notebook 활용 가이드</div>
+    <div class="footer-l">이든X학원 · 이든관리형학습센터 · Gemini Notebook 활용 가이드 — 사실 기반 수정판</div>
     <div class="legend">
+      <div class="legend-item"><div class="legend-bar" style="background:#4caf50"></div> 확실히 가능</div>
+      <div class="legend-item"><div class="legend-bar" style="background:#ff9800"></div> 자료 있으면 가능</div>
       <div class="legend-item"><div class="legend-dot" style="background:#ddeaff;border:1px solid #4a7cc9"></div> 수능형</div>
       <div class="legend-item"><div class="legend-dot" style="background:#dff5ec;border:1px solid #0f6e56"></div> 내신형</div>
     </div>
   </div>
 </div>
 
-
-<!-- ===== PAGE 2 : 수학 + 사회탐구 ===== -->
+<!-- ══════════════════════════════════════════════════
+     PAGE 2 : 수학 + 사회탐구
+══════════════════════════════════════════════════ -->
 <div class="page">
   <div class="page-header">
     <div class="school-name">이든<span>X</span>학원 · 이든관리형학습센터</div>
-    <div class="guide-title">Gemini Notebook 활용 질문 예시 가이드</div>
+    <div class="guide-title">Gemini Notebook 활용 질문 가이드 — 사실 기반 수정판</div>
     <div class="page-num">2 / 4</div>
   </div>
 
@@ -532,21 +263,21 @@ body { font-family: var(--font); font-size: 9pt; color: #1a1a1a; background: #ff
       <div class="section-count">15문항</div>
     </div>
     <div class="q-grid">
-      <div class="q-item" data-num="1"><span class="tag s">수능</span>최근 10년 수능 수학 30번(최고난도) 문제에서 반복되는 출제 유형과 접근 전략을 단계별로 분석해줘</div>
-      <div class="q-item" data-num="2"><span class="tag s">수능</span>수능 수학 미적분 영역에서 '정적분의 활용'이 출제된 모든 기출을 찾아서 유형별로 분류하고 핵심 풀이 전략을 정리해줘</div>
-      <div class="q-item" data-num="3"><span class="tag s">수능</span>수능 수학에서 '조건부 확률' 문제의 최근 5년 출제 패턴과 실수하기 쉬운 함정 포인트를 기출 예시로 설명해줘</div>
-      <div class="q-item" data-num="4"><span class="tag s">수능</span>수능 수학 킬러 문항(28·29·30번)에서 가장 많이 쓰이는 수학적 개념 TOP5를 기출 근거로 정리해줘</div>
-      <div class="q-item" data-num="5"><span class="tag s">수능</span>EBS 수능특강 수학에서 수능 본시험으로 연계된 문제 유형을 최근 3년치에서 찾아 연계 패턴을 분석해줘</div>
-      <div class="q-item" data-num="6"><span class="tag s">수능</span>수능 수학 수열 단원에서 점화식 문제의 출제 빈도와 유형별 풀이법을 기출 예시와 함께 정리해줘</div>
-      <div class="q-item" data-num="7"><span class="tag s">수능</span>2028 수능 수학 체계(공통 수학1·2)에서 현행 기출과 달라지는 출제 포인트를 비교 분석해줘</div>
-      <div class="q-item" data-num="8"><span class="tag s">수능</span>수능 수학에서 '함수의 극한과 연속' 문제가 최근 10년간 어떤 방식으로 변화했는지 출제 경향 분석을 해줘</div>
-      <div class="q-item" data-num="9"><span class="tag n">내신</span>고1 수학 교과서 '이차방정식과 이차함수' 단원에서 내신 서술형으로 자주 나오는 유형 5개와 단계별 풀이 예시를 만들어줘</div>
-      <div class="q-item" data-num="10"><span class="tag n">내신</span>고2 수학 '경우의 수' 단원에서 내신 시험에 출제되는 고난도 문제 유형과 풀이 전략을 기출 근거로 알려줘</div>
-      <div class="q-item" data-num="11"><span class="tag n">내신</span>고3 수학 내신과 수능을 동시에 잡는 미적분 단원 핵심 공식 플래시카드 30개를 수능 출제 빈도와 함께 만들어줘</div>
-      <div class="q-item" data-num="12"><span class="tag n">내신</span>고1 수학 교과서 '집합과 명제' 단원의 내신 4지선다 문제 15개와 서술형 문제 5개를 만들어줘</div>
-      <div class="q-item" data-num="13"><span class="tag n">내신</span>고2 수학 '로그함수' 단원에서 내신에서 자주 틀리는 오류 유형과 정확한 풀이법을 비교해서 설명해줘</div>
-      <div class="q-item" data-num="14"><span class="tag n">내신</span>고1 수학 내신 5등급제 기준으로 1등급을 받기 위한 단원별 학습 전략과 서술형 답안 작성 요령을 알려줘</div>
-      <div class="q-item" data-num="15"><span class="tag n">내신</span>고3 수학 내신 시험에서 수능 기출 변형 문제가 출제되는 패턴과 대비 방법을 실제 예시와 함께 알려줘</div>
+      <div class="q-item ok"  data-num="1"><span class="tag s">수능</span>업로드된 수능 수학 기출에서 28·29·30번 문제를 찾아서 각 문제에 사용된 수학 개념(단원)을 출처와 함께 목록으로 정리해줘</div>
+      <div class="q-item ok"  data-num="2"><span class="tag s">수능</span>이 자료에서 미적분 '정적분의 활용'이 포함된 기출 문제를 모두 찾아줘. 각 문제의 출처와 문제 유형을 정리해줘</div>
+      <div class="q-item ok"  data-num="3"><span class="tag s">수능</span>업로드된 기출에서 '조건부 확률' 문제를 찾아서 각 문제의 조건 제시 방식과 출처를 정리해줘</div>
+      <div class="q-item ok"  data-num="4"><span class="tag s">수능</span>이 자료에서 수열 '점화식' 문제를 모두 찾아줘. 어떤 형태의 점화식이 나왔는지 출처와 함께 분류해줘</div>
+      <div class="q-item ok"  data-num="5"><span class="tag s">수능</span>업로드된 수능특강 수학에서 수능 기출과 유사한 유형의 문제를 찾아줘. 어떤 단원의 문제인지 출처와 함께 정리해줘</div>
+      <div class="q-item ok"  data-num="6"><span class="tag s">수능</span>이 자료에서 '함수의 극한과 연속' 관련 기출 문제를 찾아서 문제 유형을 분류하고 출처를 함께 알려줘</div>
+      <div class="q-item warn" data-num="7"><span class="tag s">수능</span>업로드된 자료에 2028 수능 수학 예시문항이 있다면 찾아서 기존 기출과 어떤 점이 다른지 비교해줘</div>
+      <div class="q-item ok"  data-num="8"><span class="tag s">수능</span>이 자료에서 '로그함수·지수함수' 관련 기출을 찾아서 출제된 문항 유형과 연도를 목록으로 정리해줘</div>
+      <div class="q-item ok"  data-num="9"><span class="tag n">내신</span>업로드된 고1 수학 교과서에서 '이차방정식' 단원 내용을 찾아서 핵심 개념과 예제 유형을 정리해줘</div>
+      <div class="q-item ok"  data-num="10"><span class="tag n">내신</span>이 자료에서 고2 수학 교과서 '경우의 수' 단원을 찾아줘. 주요 공식과 예제를 정리해줘</div>
+      <div class="q-item ok"  data-num="11"><span class="tag n">내신</span>업로드된 미적분 교과서에서 핵심 공식이 나온 부분을 찾아서 공식과 설명을 목록으로 정리해줘</div>
+      <div class="q-item ok"  data-num="12"><span class="tag n">내신</span>이 자료에서 고1 수학 '집합과 명제' 단원 내용을 찾아서 개념 정의와 예시를 정리해줘</div>
+      <div class="q-item ok"  data-num="13"><span class="tag n">내신</span>업로드된 수학 교과서에서 '로그함수' 단원의 핵심 개념과 자주 나오는 문제 유형 예시를 찾아서 정리해줘</div>
+      <div class="q-item ok"  data-num="14"><span class="tag n">내신</span>이 자료에서 수학 교과서 단원별 학습 목표를 찾아줘. 각 단원에서 반드시 알아야 할 개념을 요약해줘</div>
+      <div class="q-item warn" data-num="15"><span class="tag n">내신</span>업로드된 고3 수학 기출과 교과서에서 공통으로 등장하는 문제 유형이 있는지 찾아서 비교해줘</div>
     </div>
   </div>
 
@@ -556,62 +287,64 @@ body { font-family: var(--font); font-size: 9pt; color: #1a1a1a; background: #ff
   <div class="section">
     <div class="section-header so">
       <div class="section-name">📓 사회탐구</div>
-      <div class="section-sub">한국지리·세계지리·생활과윤리·윤리와사상·한국사·동아시아사·세계사·경제·정치와법·사회문화·통합사회</div>
+      <div class="section-sub">한국지리·세계지리·생활과윤리·윤리와사상·동아시아사·세계사·경제·정치와법·사회문화</div>
       <div class="section-count">30문항</div>
     </div>
     <div class="q-grid wide">
-      <div class="q-item" data-num="1"><span class="tag s">수능</span>[한국지리] 최근 10년 '도시화와 도시 문제' 단원 출제 횟수와 주요 자료(그래프·지도) 유형을 분석해줘</div>
-      <div class="q-item" data-num="2"><span class="tag s">수능</span>[세계지리] '기후 지역' 문제 최근 5년 출제 패턴과 자료 해석 전략을 기출 예시로 정리해줘</div>
-      <div class="q-item" data-num="3"><span class="tag s">수능</span>[생활과윤리] '생명 윤리' 주제가 출제된 모든 기출을 쟁점별로 분류하고 핵심 논거를 정리해줘</div>
-      <div class="q-item" data-num="4"><span class="tag s">수능</span>[윤리와사상] 동양 윤리(유교·불교·도교) 사상의 비교 문제 출제 패턴을 기출 근거로 분석해줘</div>
-      <div class="q-item" data-num="5"><span class="tag s">수능</span>[한국사] '일제강점기' 단원의 최근 10년 출제 유형과 자료(사진·문서) 해석 포인트를 정리해줘</div>
-      <div class="q-item" data-num="6"><span class="tag s">수능</span>[동아시아사] '동아시아 각국의 개항과 근대화' 주제 출제 패턴과 비교 분석 전략을 기출 근거로 알려줘</div>
-      <div class="q-item" data-num="7"><span class="tag s">수능</span>[세계사] '냉전 체제와 해체' 단원 출제 시 자주 등장하는 사료와 오답 패턴을 분석해줘</div>
-      <div class="q-item" data-num="8"><span class="tag s">수능</span>[경제] '시장 균형과 가격 변동' 문제의 그래프 해석 전략과 최근 5년 출제 유형을 정리해줘</div>
-      <div class="q-item" data-num="9"><span class="tag s">수능</span>[정치와법] '선거 제도와 정치 참여' 단원의 자료 분석형 문제 출제 패턴과 정답 선지 특징을 분석해줘</div>
-      <div class="q-item" data-num="10"><span class="tag s">수능</span>[사회문화] '사회 불평등' 단원의 표·그래프 해석 문제 유형과 풀이 전략을 기출 예시로 정리해줘</div>
-      <div class="q-item" data-num="11"><span class="tag s">수능</span>[통합사회] 2028 수능 통합사회 예시문항에서 현행 사회탐구 기출과 연계되는 개념을 단원별로 분석해줘</div>
-      <div class="q-item" data-num="12"><span class="tag s">수능</span>[생활과윤리] '정의로운 사회' 관련 철학자 비교 문제의 출제 패턴과 혼동하기 쉬운 개념을 정리해줘</div>
-      <div class="q-item" data-num="13"><span class="tag s">수능</span>[한국지리] '인구 변화와 다문화' 단원의 통계 자료 해석형 문제 유형과 최근 3년 출제 경향을 분석해줘</div>
-      <div class="q-item" data-num="14"><span class="tag s">수능</span>[사회문화] 수능 1등급을 가르는 고난도 자료 분석 문제(표·그래프·그림)의 공통 출제 패턴을 기출 근거로 정리해줘</div>
-      <div class="q-item" data-num="15"><span class="tag s">수능</span>[경제] '국제 경제(환율·무역)' 단원이 최근 10년간 출제된 유형과 그래프 해석 핵심 전략을 알려줘</div>
-      <div class="q-item" data-num="16"><span class="tag n">내신</span>[통합사회] 고1 교과서 '인권과 헌법' 단원에서 내신 서술형으로 자주 출제되는 유형 5개와 모범 답안 작성법을 알려줘</div>
-      <div class="q-item" data-num="17"><span class="tag n">내신</span>[한국사] 고1·2 교과서 '조선 후기 사회 변동' 단원의 내신 5등급제 기준 고난도 서술형 예상 문제 5개와 채점 기준을 만들어줘</div>
-      <div class="q-item" data-num="18"><span class="tag n">내신</span>[생활과윤리] 고3 교과서에서 내신과 수능을 동시에 대비할 수 있는 단원별 핵심 플래시카드 30개를 만들어줘</div>
-      <div class="q-item" data-num="19"><span class="tag n">내신</span>[사회문화] 고2·3 교과서 '문화 변동' 단원에서 내신 시험에 자주 나오는 개념과 오개념 교정 포인트를 정리해줘</div>
-      <div class="q-item" data-num="20"><span class="tag n">내신</span>[통합사회] 고1 내신에서 지도·그래프·도표 자료가 출제될 때 고득점 서술 전략과 예시 답안을 만들어줘</div>
-      <div class="q-item" data-num="21"><span class="tag n">내신</span>[한국지리] 고3 교과서 '산업 구조 변화' 단원의 내신 4지선다 10문제와 서술형 3문제를 기출 연계해서 만들어줘</div>
-      <div class="q-item" data-num="22"><span class="tag n">내신</span>[정치와법] 고3 교과서 '헌법의 의의' 단원에서 내신 논술형 문제로 자주 나오는 주제와 논술 구조 작성법을 알려줘</div>
-      <div class="q-item" data-num="23"><span class="tag n">내신</span>[경제] 고3 교과서 '금융 생활' 단원에서 내신 서술형 자주 출제 유형과 실생활 연계 예시 문제 5개를 만들어줘</div>
-      <div class="q-item" data-num="24"><span class="tag n">내신</span>[세계사] 고3 교과서 '제국주의와 민족 운동' 단원의 내신 시험 대비 핵심 사건 연표와 비교 서술형 문제 5개를 만들어줘</div>
-      <div class="q-item" data-num="25"><span class="tag n">내신</span>[윤리와사상] 고3 교과서 서양 윤리 사상 단원에서 내신에서 자주 혼동하는 사상가 비교 문제와 정확한 구분법을 알려줘</div>
-      <div class="q-item" data-num="26"><span class="tag n">내신</span>[동아시아사] 고3 교과서 '20세기 동아시아' 단원의 내신 서술형 고득점 전략과 예상 문제 5개를 만들어줘</div>
-      <div class="q-item" data-num="27"><span class="tag n">내신</span>[세계지리] 고3 교과서 '세계의 인구와 도시' 단원에서 내신 자료 해석형 문제 유형과 서술 답안 작성 요령을 알려줘</div>
-      <div class="q-item" data-num="28"><span class="tag n">내신</span>[사회문화] 고3 내신 1등급을 위한 서술형 답안에서 반드시 들어가야 할 핵심 개념어와 표현 방식을 정리해줘</div>
-      <div class="q-item" data-num="29"><span class="tag n">내신</span>[생활과윤리] 고3 교과서 '환경 윤리' 단원에서 내신 논술형으로 자주 나오는 쟁점과 찬반 논거 정리법을 예시와 함께 알려줘</div>
-      <div class="q-item" data-num="30"><span class="tag n">내신</span>[통합사회+한국사] 고1 내신에서 두 과목을 동시에 대비하는 시간 배분 전략과 단원별 우선순위를 알려줘</div>
+      <div class="q-item ok"  data-num="1"><span class="tag s">수능</span>[한국지리] 업로드된 기출에서 '도시화' 관련 문제를 찾아서 사용된 자료(그래프·지도·표) 유형과 출처를 정리해줘</div>
+      <div class="q-item ok"  data-num="2"><span class="tag s">수능</span>[세계지리] 이 자료에서 '기후 지역' 관련 기출 문제를 찾아서 제시된 자료 유형과 출처를 목록으로 정리해줘</div>
+      <div class="q-item ok"  data-num="3"><span class="tag s">수능</span>[생활과윤리] 업로드된 기출에서 '생명 윤리' 관련 문제를 모두 찾아줘. 어떤 쟁점이 출제됐는지 출처와 함께 정리해줘</div>
+      <div class="q-item ok"  data-num="4"><span class="tag s">수능</span>[윤리와사상] 이 자료에서 동양 윤리(유교·불교·도교) 사상이 나온 기출 문제를 찾아서 각 사상별로 분류해줘</div>
+      <div class="q-item ok"  data-num="5"><span class="tag s">수능</span>[한국사] 업로드된 기출에서 '일제강점기' 관련 문제를 찾아서 사용된 자료(사진·문서·그래프) 유형과 출처를 정리해줘</div>
+      <div class="q-item ok"  data-num="6"><span class="tag s">수능</span>[동아시아사] 이 자료에서 '개항과 근대화' 관련 기출 문제를 찾아줘. 각 문제에서 다룬 국가와 사건을 출처와 함께 정리해줘</div>
+      <div class="q-item ok"  data-num="7"><span class="tag s">수능</span>[세계사] 업로드된 기출에서 '냉전 체제' 관련 문제를 찾아서 사용된 사료 유형과 문제 출처를 정리해줘</div>
+      <div class="q-item ok"  data-num="8"><span class="tag s">수능</span>[경제] 이 자료에서 '시장 균형·가격 변동' 관련 기출을 찾아줘. 각 문제에서 사용된 그래프 유형을 출처와 함께 분류해줘</div>
+      <div class="q-item ok"  data-num="9"><span class="tag s">수능</span>[정치와법] 업로드된 기출에서 '선거 제도' 관련 문제를 찾아서 제시된 자료 유형과 출처를 정리해줘</div>
+      <div class="q-item ok"  data-num="10"><span class="tag s">수능</span>[사회문화] 이 자료에서 '사회 불평등' 관련 기출을 찾아줘. 각 문제에서 사용된 표·그래프 유형을 출처와 함께 정리해줘</div>
+      <div class="q-item ok"  data-num="11"><span class="tag s">수능</span>[생활과윤리] 업로드된 기출에서 '정의'와 관련된 철학자가 나온 문제를 찾아서 어떤 철학자들이 출제됐는지 정리해줘</div>
+      <div class="q-item ok"  data-num="12"><span class="tag s">수능</span>[한국지리] 이 자료에서 '인구 변화' 관련 기출을 찾아줘. 어떤 통계 자료가 제시됐는지 출처와 함께 목록으로 정리해줘</div>
+      <div class="q-item ok"  data-num="13"><span class="tag s">수능</span>[사회문화] 업로드된 기출에서 자료 분석형 문제(표·그래프·그림)를 찾아서 각 문제에 사용된 자료 유형과 출처를 정리해줘</div>
+      <div class="q-item ok"  data-num="14"><span class="tag s">수능</span>[경제] 이 자료에서 '환율·무역' 관련 기출 문제를 찾아서 제시된 그래프 유형과 선지 구성 방식을 출처와 함께 정리해줘</div>
+      <div class="q-item warn" data-num="15"><span class="tag s">수능</span>[통합사회] 업로드된 자료에 통합사회 기출이나 예시문항이 있다면 찾아서 어떤 단원 내용이 출제됐는지 정리해줘</div>
+      <div class="q-item ok"  data-num="16"><span class="tag n">내신</span>[통합사회] 업로드된 교과서에서 '인권과 헌법' 단원 내용을 찾아서 핵심 개념과 사례를 정리해줘</div>
+      <div class="q-item ok"  data-num="17"><span class="tag n">내신</span>[한국사] 이 자료에서 '조선 후기 사회 변동' 관련 교과서 내용을 찾아서 핵심 사건과 개념을 정리해줘</div>
+      <div class="q-item ok"  data-num="18"><span class="tag n">내신</span>[생활과윤리] 업로드된 교과서에서 단원별 핵심 개념을 찾아서 윤리 용어와 함께 정리해줘</div>
+      <div class="q-item ok"  data-num="19"><span class="tag n">내신</span>[사회문화] 이 자료에서 '문화 변동' 단원 내용을 찾아줘. 문화 변동의 유형과 사례를 교과서에서 정리해줘</div>
+      <div class="q-item ok"  data-num="20"><span class="tag n">내신</span>[통합사회] 업로드된 교과서에서 자료(지도·그래프·표)가 포함된 페이지를 찾아서 자료와 설명을 함께 요약해줘</div>
+      <div class="q-item ok"  data-num="21"><span class="tag n">내신</span>[한국지리] 이 자료에서 '산업 구조 변화' 관련 교과서 내용을 찾아서 핵심 개념과 통계 자료를 정리해줘</div>
+      <div class="q-item ok"  data-num="22"><span class="tag n">내신</span>[정치와법] 업로드된 교과서에서 '헌법의 의의' 부분을 찾아서 주요 내용과 핵심 조항을 정리해줘</div>
+      <div class="q-item ok"  data-num="23"><span class="tag n">내신</span>[경제] 이 자료에서 '금융 생활' 단원 내용을 찾아줘. 교과서에 나온 주요 금융 개념과 사례를 정리해줘</div>
+      <div class="q-item ok"  data-num="24"><span class="tag n">내신</span>[세계사] 업로드된 교과서에서 '제국주의와 민족 운동' 단원의 주요 사건과 연도를 찾아서 정리해줘</div>
+      <div class="q-item ok"  data-num="25"><span class="tag n">내신</span>[윤리와사상] 이 자료에서 서양 윤리 사상가들의 주요 주장이 나온 부분을 찾아서 사상가별로 비교 정리해줘</div>
+      <div class="q-item ok"  data-num="26"><span class="tag n">내신</span>[동아시아사] 업로드된 교과서에서 '20세기 동아시아' 관련 내용을 찾아서 국가별 주요 사건을 정리해줘</div>
+      <div class="q-item ok"  data-num="27"><span class="tag n">내신</span>[세계지리] 이 자료에서 '세계의 인구와 도시' 단원 내용을 찾아줘. 교과서에 나온 통계 자료와 설명을 요약해줘</div>
+      <div class="q-item ok"  data-num="28"><span class="tag n">내신</span>[사회문화] 업로드된 교과서에서 사회문화 핵심 용어 정의가 나온 부분을 찾아서 개념어 목록으로 정리해줘</div>
+      <div class="q-item ok"  data-num="29"><span class="tag n">내신</span>[생활과윤리] 이 자료에서 '환경 윤리' 관련 내용을 찾아줘. 교과서에 나온 찬반 논거와 사례를 정리해줘</div>
+      <div class="q-item warn" data-num="30"><span class="tag n">내신</span>[통합사회+한국사] 업로드된 두 교과서에서 공통으로 다루는 주제나 개념이 있다면 찾아서 비교해줘</div>
     </div>
   </div>
 
   <div class="page-footer">
-    <div class="footer-l">이든X학원 · 이든관리형학습센터 · AI 초격차 학습 시스템 · Gemini Notebook 활용 가이드</div>
+    <div class="footer-l">이든X학원 · 이든관리형학습센터 · Gemini Notebook 활용 가이드 — 사실 기반 수정판</div>
     <div class="legend">
+      <div class="legend-item"><div class="legend-bar" style="background:#4caf50"></div> 확실히 가능</div>
+      <div class="legend-item"><div class="legend-bar" style="background:#ff9800"></div> 자료 있으면 가능</div>
       <div class="legend-item"><div class="legend-dot" style="background:#ddeaff;border:1px solid #4a7cc9"></div> 수능형</div>
       <div class="legend-item"><div class="legend-dot" style="background:#dff5ec;border:1px solid #0f6e56"></div> 내신형</div>
     </div>
   </div>
 </div>
 
-
-<!-- ===== PAGE 3 : 과학탐구 ===== -->
+<!-- ══════════════════════════════════════════════════
+     PAGE 3 : 과학탐구
+══════════════════════════════════════════════════ -->
 <div class="page">
   <div class="page-header">
     <div class="school-name">이든<span>X</span>학원 · 이든관리형학습센터</div>
-    <div class="guide-title">Gemini Notebook 활용 질문 예시 가이드</div>
+    <div class="guide-title">Gemini Notebook 활용 질문 가이드 — 사실 기반 수정판</div>
     <div class="page-num">3 / 4</div>
   </div>
 
-  <!-- 과학탐구 -->
   <div class="section">
     <div class="section-header sc">
       <div class="section-name">📕 과학탐구</div>
@@ -619,110 +352,125 @@ body { font-family: var(--font); font-size: 9pt; color: #1a1a1a; background: #ff
       <div class="section-count">30문항</div>
     </div>
     <div class="q-grid wide">
-      <div class="q-item" data-num="1"><span class="tag s">수능</span>[물리학1] 최근 10년 수능 '역학적 에너지 보존' 문제의 출제 패턴과 자료 해석 핵심 전략을 기출 근거로 정리해줘</div>
-      <div class="q-item" data-num="2"><span class="tag s">수능</span>[화학1] 수능 '중화 반응' 단원 출제 시 그래프 해석 포인트와 최근 5년 오답 패턴을 분석해줘</div>
-      <div class="q-item" data-num="3"><span class="tag s">수능</span>[생명과학1] '유전자 발현' 관련 문제의 최근 10년 출제 유형과 자료 해석 전략을 기출 예시로 정리해줘</div>
-      <div class="q-item" data-num="4"><span class="tag s">수능</span>[지구과학1] '대기와 해양' 단원의 자료(그래프·도표) 해석형 문제 패턴과 풀이 전략을 분석해줘</div>
-      <div class="q-item" data-num="5"><span class="tag s">수능</span>[물리학2] '전자기 유도' 문제의 최근 5년 출제 경향과 킬러 문항 분석을 기출 근거로 알려줘</div>
-      <div class="q-item" data-num="6"><span class="tag s">수능</span>[화학2] '반응 속도와 화학 평형' 단원의 그래프 해석 전략과 자주 나오는 오답 선지 패턴을 정리해줘</div>
-      <div class="q-item" data-num="7"><span class="tag s">수능</span>[생명과학2] '세포 분열' 관련 자료 해석 문제의 출제 패턴과 단계별 풀이 전략을 알려줘</div>
-      <div class="q-item" data-num="8"><span class="tag s">수능</span>[지구과학2] '별의 진화와 우주' 단원의 최근 10년 출제 유형과 고난도 문항 접근 전략을 기출 예시로 분석해줘</div>
-      <div class="q-item" data-num="9"><span class="tag s">수능</span>[통합과학] 2028 수능 통합과학 예시문항에서 현행 과학탐구 기출과 연계되는 개념을 단원별로 비교 분석해줘</div>
-      <div class="q-item" data-num="10"><span class="tag s">수능</span>[물리학1] '빛과 파동' 단원의 최근 5년 출제 패턴과 자료 분석 전략을 기출 근거로 정리해줘</div>
-      <div class="q-item" data-num="11"><span class="tag s">수능</span>[화학1] '원소의 주기성' 관련 문제 출제 시 자주 나오는 자료 유형과 선지 패턴을 분석해줘</div>
-      <div class="q-item" data-num="12"><span class="tag s">수능</span>[생명과학1] 수능 1등급을 가르는 고난도 유전 문제(가계도 분석)의 풀이 전략을 기출 근거로 단계별로 알려줘</div>
-      <div class="q-item" data-num="13"><span class="tag s">수능</span>[지구과학1] '지질 시대와 화석' 단원의 자료 해석형 문제 출제 패턴과 최근 3년 기출 분석을 해줘</div>
-      <div class="q-item" data-num="14"><span class="tag s">수능</span>[물리학1+화학1] 두 과목을 선택할 때 시간 배분 전략과 고득점을 위한 학습 우선순위를 알려줘</div>
-      <div class="q-item" data-num="15"><span class="tag s">수능</span>[생명과학1] '항상성과 면역' 단원의 최근 10년 출제 유형 변화와 2027 수능 예상 출제 포인트를 분석해줘</div>
-      <div class="q-item" data-num="16"><span class="tag n">내신</span>[통합과학] 고1 교과서 '물질의 규칙성' 단원에서 내신 서술형 자주 출제 유형 5개와 모범 답안 작성법을 만들어줘</div>
-      <div class="q-item" data-num="17"><span class="tag n">내신</span>[물리학1] 고3 교과서 '운동의 법칙' 단원의 내신 계산형 서술 문제 5개와 단계별 채점 기준을 만들어줘</div>
-      <div class="q-item" data-num="18"><span class="tag n">내신</span>[화학1] 고3 교과서 '화학 결합' 단원에서 내신 5등급제 기준 고난도 서술형 예상 문제와 오개념 교정 포인트를 정리해줘</div>
-      <div class="q-item" data-num="19"><span class="tag n">내신</span>[생명과학1] 고3 교과서 '생태계와 환경' 단원의 내신 자료 해석형 문제 유형과 서술형 답안 핵심 키워드를 정리해줘</div>
-      <div class="q-item" data-num="20"><span class="tag n">내신</span>[지구과학1] 고3 교과서 '해수의 순환' 단원에서 내신 시험 대비 플래시카드 20개와 예상 문제 5개를 만들어줘</div>
-      <div class="q-item" data-num="21"><span class="tag n">내신</span>[통합과학] 고1 내신에서 실험 결과 해석형 서술 문제의 출제 패턴과 고득점 답안 작성 전략을 알려줘</div>
-      <div class="q-item" data-num="22"><span class="tag n">내신</span>[화학1] 고3 교과서 '산화와 환원' 단원에서 내신과 수능을 동시에 대비하는 핵심 개념 정리와 문제 유형을 알려줘</div>
-      <div class="q-item" data-num="23"><span class="tag n">내신</span>[물리학1] 고3 내신에서 수능 기출이 변형 출제되는 패턴과 대비 방법을 실제 예시와 함께 설명해줘</div>
-      <div class="q-item" data-num="24"><span class="tag n">내신</span>[생명과학1] 고3 교과서 '유전 정보와 염색체' 단원의 내신 서술형 고득점 전략과 반드시 들어가야 할 핵심 개념어를 정리해줘</div>
-      <div class="q-item" data-num="25"><span class="tag n">내신</span>[지구과학1] 고3 교과서 '별과 외계 행성' 단원에서 내신 논술형으로 자주 나오는 주제와 서술 구조 작성법을 알려줘</div>
-      <div class="q-item" data-num="26"><span class="tag n">내신</span>[물리학2] 고3 교과서 '파동과 정보통신' 단원의 내신 서술형 예상 문제 5개와 채점 기준을 함께 만들어줘</div>
-      <div class="q-item" data-num="27"><span class="tag n">내신</span>[화학2] 고3 교과서 '유기 화합물' 단원에서 내신에서 자주 혼동하는 개념과 구조식 서술 방법을 정리해줘</div>
-      <div class="q-item" data-num="28"><span class="tag n">내신</span>[생명과학2] 고3 교과서 '생명공학 기술' 단원의 내신 논술형 쟁점 주제와 찬반 논거 정리법을 예시와 함께 알려줘</div>
-      <div class="q-item" data-num="29"><span class="tag n">내신</span>[지구과학2] 고3 교과서 '지구의 역장' 단원에서 내신 계산형 서술 문제 유형과 단계별 풀이 전략을 알려줘</div>
-      <div class="q-item" data-num="30"><span class="tag n">내신</span>[통합과학+물리학1] 고1 통합과학에서 배운 개념이 고3 물리학1로 이어지는 연계 포인트와 내신·수능 동시 대비 학습법을 정리해줘</div>
+      <div class="q-item ok"  data-num="1"><span class="tag s">수능</span>[물리학1] 업로드된 기출에서 '역학적 에너지 보존' 관련 문제를 찾아서 각 문제에 제시된 자료 유형과 출처를 정리해줘</div>
+      <div class="q-item ok"  data-num="2"><span class="tag s">수능</span>[화학1] 이 자료에서 '중화 반응' 관련 기출 문제를 찾아서 제시된 그래프·표 유형과 출처를 목록으로 정리해줘</div>
+      <div class="q-item ok"  data-num="3"><span class="tag s">수능</span>[생명과학1] 업로드된 기출에서 '유전자 발현' 관련 문제를 찾아서 자료 제시 방식과 출처를 정리해줘</div>
+      <div class="q-item ok"  data-num="4"><span class="tag s">수능</span>[지구과학1] 이 자료에서 '대기와 해양' 관련 기출을 찾아줘. 어떤 그래프·도표가 사용됐는지 출처와 함께 정리해줘</div>
+      <div class="q-item ok"  data-num="5"><span class="tag s">수능</span>[물리학2] 업로드된 기출에서 '전자기 유도' 관련 문제를 찾아서 문제 유형과 출처를 정리해줘</div>
+      <div class="q-item ok"  data-num="6"><span class="tag s">수능</span>[화학2] 이 자료에서 '반응 속도와 화학 평형' 관련 기출을 찾아줘. 그래프 유형과 출처를 분류해줘</div>
+      <div class="q-item ok"  data-num="7"><span class="tag s">수능</span>[생명과학2] 업로드된 기출에서 '세포 분열' 관련 문제를 찾아서 자료 제시 방식과 출처를 정리해줘</div>
+      <div class="q-item ok"  data-num="8"><span class="tag s">수능</span>[지구과학2] 이 자료에서 '별의 진화와 우주' 관련 기출을 찾아줘. 문제 유형과 출처를 목록으로 정리해줘</div>
+      <div class="q-item warn" data-num="9"><span class="tag s">수능</span>[통합과학] 업로드된 자료에 통합과학 기출이나 예시문항이 있다면 찾아서 어떤 단원이 출제됐는지 정리해줘</div>
+      <div class="q-item ok"  data-num="10"><span class="tag s">수능</span>[물리학1] 이 자료에서 '빛과 파동' 관련 기출 문제를 찾아서 문제 유형과 사용된 자료를 출처와 함께 정리해줘</div>
+      <div class="q-item ok"  data-num="11"><span class="tag s">수능</span>[화학1] 업로드된 기출에서 '원소의 주기성' 관련 문제를 찾아서 제시된 자료 유형과 출처를 정리해줘</div>
+      <div class="q-item ok"  data-num="12"><span class="tag s">수능</span>[생명과학1] 이 자료에서 '가계도 분석' 유전 문제를 찾아줘. 각 문제의 조건 제시 방식과 출처를 정리해줘</div>
+      <div class="q-item ok"  data-num="13"><span class="tag s">수능</span>[지구과학1] 업로드된 기출에서 '지질 시대와 화석' 관련 문제를 찾아서 자료 유형과 출처를 정리해줘</div>
+      <div class="q-item ok"  data-num="14"><span class="tag s">수능</span>[물리학1+화학1] 이 자료에서 두 과목 기출을 비교해줘. 자료 제시 방식이 어떻게 다른지 각 과목 출처와 함께 정리해줘</div>
+      <div class="q-item ok"  data-num="15"><span class="tag s">수능</span>[생명과학1] 업로드된 기출에서 '항상성과 면역' 관련 문제를 찾아서 유형과 출처를 목록으로 정리해줘</div>
+      <div class="q-item ok"  data-num="16"><span class="tag n">내신</span>[통합과학] 업로드된 교과서에서 '물질의 규칙성' 단원 내용을 찾아서 핵심 개념과 예시를 정리해줘</div>
+      <div class="q-item ok"  data-num="17"><span class="tag n">내신</span>[물리학1] 이 자료에서 '운동의 법칙' 단원 내용을 찾아줘. 교과서에 나온 공식과 예제를 정리해줘</div>
+      <div class="q-item ok"  data-num="18"><span class="tag n">내신</span>[화학1] 업로드된 교과서에서 '화학 결합' 단원의 핵심 개념과 결합 종류를 찾아서 비교 정리해줘</div>
+      <div class="q-item ok"  data-num="19"><span class="tag n">내신</span>[생명과학1] 이 자료에서 '생태계와 환경' 단원 내용을 찾아줘. 교과서에 나온 핵심 개념과 그림 자료를 요약해줘</div>
+      <div class="q-item ok"  data-num="20"><span class="tag n">내신</span>[지구과학1] 업로드된 교과서에서 '해수의 순환' 단원 내용을 찾아서 핵심 개념과 도표 설명을 정리해줘</div>
+      <div class="q-item ok"  data-num="21"><span class="tag n">내신</span>[통합과학] 이 자료에서 실험 활동이 포함된 단원을 찾아줘. 각 실험의 목적과 과정을 교과서에서 정리해줘</div>
+      <div class="q-item ok"  data-num="22"><span class="tag n">내신</span>[화학1] 업로드된 교과서에서 '산화와 환원' 단원의 핵심 개념과 반응식 예시를 찾아서 정리해줘</div>
+      <div class="q-item ok"  data-num="23"><span class="tag warn">공통</span>[물리학1] 이 자료에서 교과서 내용과 수능 기출이 겹치는 '운동학' 관련 내용을 찾아서 비교해줘</div>
+      <div class="q-item ok"  data-num="24"><span class="tag n">내신</span>[생명과학1] 업로드된 교과서에서 '유전 정보와 염색체' 단원의 핵심 용어와 개념을 찾아서 정리해줘</div>
+      <div class="q-item ok"  data-num="25"><span class="tag n">내신</span>[지구과학1] 이 자료에서 '별과 외계 행성' 단원 내용을 찾아줘. 교과서에 나온 별의 분류 기준과 예시를 정리해줘</div>
+      <div class="q-item ok"  data-num="26"><span class="tag n">내신</span>[물리학2] 업로드된 교과서에서 '파동과 정보통신' 단원 내용을 찾아서 핵심 개념과 공식을 정리해줘</div>
+      <div class="q-item ok"  data-num="27"><span class="tag n">내신</span>[화학2] 이 자료에서 '유기 화합물' 단원 내용을 찾아줘. 교과서에 나온 유기물 분류와 특성을 정리해줘</div>
+      <div class="q-item ok"  data-num="28"><span class="tag n">내신</span>[생명과학2] 업로드된 교과서에서 '생명공학 기술' 단원 내용을 찾아서 주요 기술과 적용 사례를 정리해줘</div>
+      <div class="q-item ok"  data-num="29"><span class="tag n">내신</span>[지구과학2] 이 자료에서 '지구의 역장' 단원 내용을 찾아줘. 교과서에 나온 핵심 개념과 계산 공식을 정리해줘</div>
+      <div class="q-item warn" data-num="30"><span class="tag n">내신</span>[통합과학↔물리학1] 업로드된 두 교과서에서 공통으로 등장하는 개념이나 원리를 찾아서 어떻게 연결되는지 비교해줘</div>
     </div>
   </div>
 
   <div class="page-footer">
-    <div class="footer-l">이든X학원 · 이든관리형학습센터 · AI 초격차 학습 시스템 · Gemini Notebook 활용 가이드</div>
+    <div class="footer-l">이든X학원 · 이든관리형학습센터 · Gemini Notebook 활용 가이드 — 사실 기반 수정판</div>
     <div class="legend">
+      <div class="legend-item"><div class="legend-bar" style="background:#4caf50"></div> 확실히 가능</div>
+      <div class="legend-item"><div class="legend-bar" style="background:#ff9800"></div> 자료 있으면 가능</div>
       <div class="legend-item"><div class="legend-dot" style="background:#ddeaff;border:1px solid #4a7cc9"></div> 수능형</div>
       <div class="legend-item"><div class="legend-dot" style="background:#dff5ec;border:1px solid #0f6e56"></div> 내신형</div>
     </div>
   </div>
 </div>
 
-
-<!-- ===== PAGE 4 : 통합사회 + 통합과학 + 한국사 + 팁 ===== -->
+<!-- ══════════════════════════════════════════════════
+     PAGE 4 : 통합사회 + 통합과학 + 한국사 + 핵심 원칙
+══════════════════════════════════════════════════ -->
 <div class="page">
   <div class="page-header">
     <div class="school-name">이든<span>X</span>학원 · 이든관리형학습센터</div>
-    <div class="guide-title">Gemini Notebook 활용 질문 예시 가이드</div>
+    <div class="guide-title">Gemini Notebook 활용 질문 가이드 — 사실 기반 수정판</div>
     <div class="page-num">4 / 4</div>
   </div>
 
   <div class="two-col">
-    <div class="col-subject">
-      <!-- 통합사회 -->
+    <!-- 통합사회 -->
+    <div>
       <div class="section">
         <div class="section-header ts">
           <div class="section-name">📒 통합사회</div>
-          <div class="section-sub">고1·2028 수능 대비</div>
+          <div class="section-sub">고1 · 2028 대비</div>
           <div class="section-count">15문항</div>
         </div>
         <div class="q-grid" style="grid-template-columns:1fr">
-          <div class="q-item" data-num="1"><span class="tag s">수능</span>2028 수능 통합사회 예시문항을 분석해서 현행 사회탐구 기출과 연계되는 핵심 개념과 출제 방향을 단원별로 정리해줘</div>
-          <div class="q-item" data-num="2"><span class="tag s">수능</span>'인권 보장과 헌법' 단원이 수능형으로 출제될 때 예상되는 자료 유형과 문제 패턴을 기출 근거로 분석해줘</div>
-          <div class="q-item" data-num="3"><span class="tag s">수능</span>2028 수능 통합사회에서 '지속 가능한 발전' 개념이 출제될 방식을 현행 기출 패턴과 예시문항을 근거로 예측해줘</div>
-          <div class="q-item" data-num="4"><span class="tag s">수능</span>'시장 경제와 금융' 단원에서 수능형 자료 해석 문제로 출제될 가능성이 높은 유형과 핵심 개념을 정리해줘</div>
-          <div class="q-item" data-num="5"><span class="tag s">수능</span>2028 수능 통합사회에서 융합형 문제(지리+사회+경제+역사 통합)의 예상 출제 패턴을 예시문항 근거로 분석해줘</div>
-          <div class="q-item" data-num="6"><span class="tag s">수능</span>'문화와 다양성' 단원에서 수능형 출제 예상 자료 유형(지도·그래프·사례)과 문제 풀이 전략을 알려줘</div>
-          <div class="q-item" data-num="7"><span class="tag s">수능</span>2028 수능 통합사회 1등급을 위한 단원별 학습 우선순위와 고난도 예상 유형을 분석해줘</div>
-          <div class="q-item" data-num="8"><span class="tag s">수능</span>현행 사회탐구 기출 자료 중 2028 수능 통합사회 대비에 가장 유용한 단원과 문제 유형을 찾아서 정리해줘</div>
-          <div class="q-item" data-num="9"><span class="tag n">내신</span>고1 교과서 '삶의 이해와 환경' 단원에서 내신 서술형 예상 문제 5개와 모범 답안 구조를 만들어줘</div>
-          <div class="q-item" data-num="10"><span class="tag n">내신</span>고1 내신 5등급제 기준 1등급을 받기 위한 단원별 핵심 개념과 서술형 답안 작성 전략을 알려줘</div>
-          <div class="q-item" data-num="11"><span class="tag n">내신</span>고1 교과서 '자연환경과 인간' 단원의 내신 자료 해석형 문제 유형과 고득점 서술 전략을 예시로 알려줘</div>
-          <div class="q-item" data-num="12"><span class="tag n">내신</span>통합사회 전 단원 핵심 개념을 플래시카드 40개로 만들어줘. 수능 연계 중요도도 함께 표기해줘</div>
-          <div class="q-item" data-num="13"><span class="tag n">내신</span>고1 교과서 '정치와 법' 파트에서 내신 논술형 자주 출제 주제와 논술 구조 작성법을 알려줘</div>
-          <div class="q-item" data-num="14"><span class="tag n">내신</span>고1 내신에서 타 과목(국어·역사)과 연계되어 출제되는 융합형 문제 유형과 대비 전략을 알려줘</div>
-          <div class="q-item" data-num="15"><span class="tag n">내신</span>고1 중간·기말 시험 대비 단원별 예상 문제 슬라이드를 구성해줘. 객관식 20개, 서술형 5개, 논술형 1개 포함</div>
+          <div class="q-item ok"  data-num="1"><span class="tag warn">공통</span>업로드된 통합사회 교과서에서 단원별 핵심 개념을 찾아서 목록으로 정리해줘</div>
+          <div class="q-item ok"  data-num="2"><span class="tag n">내신</span>이 자료에서 '인권 보장과 헌법' 단원 내용을 찾아서 핵심 조항과 사례를 정리해줘</div>
+          <div class="q-item ok"  data-num="3"><span class="tag n">내신</span>업로드된 교과서에서 '지속 가능한 발전' 관련 내용을 찾아줘. 교과서에 나온 개념과 사례를 요약해줘</div>
+          <div class="q-item ok"  data-num="4"><span class="tag n">내신</span>이 자료에서 '시장 경제와 금융' 단원의 핵심 개념과 그림 자료를 찾아서 정리해줘</div>
+          <div class="q-item warn" data-num="5"><span class="tag s">수능</span>업로드된 자료에 통합사회 예시문항이 있다면 지리·사회·경제·역사 중 어떤 영역이 통합됐는지 찾아줘</div>
+          <div class="q-item ok"  data-num="6"><span class="tag n">내신</span>이 자료에서 '문화와 다양성' 단원 내용을 찾아줘. 교과서에 나온 개념과 사례를 정리해줘</div>
+          <div class="q-item ok"  data-num="7"><span class="tag n">내신</span>업로드된 통합사회 교과서에서 지도·그래프가 포함된 내용을 찾아서 어떤 자료가 있는지 정리해줘</div>
+          <div class="q-item ok"  data-num="8"><span class="tag warn">공통</span>이 자료에서 통합사회 교과서와 수능 사회탐구 기출이 내용상 연결되는 부분을 찾아서 비교해줘</div>
+          <div class="q-item ok"  data-num="9"><span class="tag n">내신</span>업로드된 교과서에서 '삶의 이해와 환경' 단원의 핵심 내용을 찾아서 요약해줘</div>
+          <div class="q-item ok"  data-num="10"><span class="tag n">내신</span>이 자료에서 통합사회 교과서의 단원별 학습 목표를 찾아서 목록으로 정리해줘</div>
+          <div class="q-item ok"  data-num="11"><span class="tag n">내신</span>업로드된 교과서에서 '자연환경과 인간' 단원 내용을 찾아줘. 핵심 개념과 그림 자료를 요약해줘</div>
+          <div class="q-item ok"  data-num="12"><span class="tag warn">공통</span>이 자료에서 통합사회 핵심 용어 정의가 나온 부분을 찾아서 용어집 형태로 정리해줘</div>
+          <div class="q-item ok"  data-num="13"><span class="tag n">내신</span>업로드된 교과서에서 '정치와 법' 파트의 핵심 개념과 사례를 찾아서 정리해줘</div>
+          <div class="q-item ok"  data-num="14"><span class="tag n">내신</span>이 자료에서 통합사회 교과서에 포함된 실제 사례와 통계 자료를 찾아서 단원별로 정리해줘</div>
+          <div class="q-item ok"  data-num="15"><span class="tag n">내신</span>업로드된 교과서에서 서술형 문제와 활동 과제가 나온 부분을 찾아줘. 어떤 활동이 있는지 정리해줘</div>
         </div>
       </div>
     </div>
 
-    <div class="col-subject">
-      <!-- 통합과학 -->
+    <!-- 통합과학 + 한국사 -->
+    <div>
       <div class="section">
         <div class="section-header sc">
           <div class="section-name">📔 통합과학</div>
-          <div class="section-sub">고1·2028 수능 대비</div>
-          <div class="section-count">15문항</div>
+          <div class="section-sub">고1 · 2028 대비</div>
+          <div class="section-count">7문항</div>
         </div>
         <div class="q-grid" style="grid-template-columns:1fr">
-          <div class="q-item" data-num="1"><span class="tag s">수능</span>2028 수능 통합과학 예시문항을 분석해서 현행 과학탐구 기출과 연계되는 핵심 개념과 출제 방향을 단원별로 정리해줘</div>
-          <div class="q-item" data-num="2"><span class="tag s">수능</span>'물질의 규칙성과 결합' 단원에서 수능형으로 출제될 가능성이 높은 자료 유형과 문제 패턴을 분석해줘</div>
-          <div class="q-item" data-num="3"><span class="tag s">수능</span>2028 수능 통합과학에서 융합형 문제(물리+화학+생물+지구과학 통합)의 예상 출제 패턴을 예시문항으로 분석해줘</div>
-          <div class="q-item" data-num="4"><span class="tag s">수능</span>'시스템과 상호작용' 단원에서 수능형 자료 해석 문제로 출제될 핵심 개념과 풀이 전략을 알려줘</div>
-          <div class="q-item" data-num="5"><span class="tag s">수능</span>2028 수능 통합과학에서 '변화와 다양성' 단원의 출제 예상 유형과 현행 기출 연계 포인트를 정리해줘</div>
-          <div class="q-item" data-num="6"><span class="tag s">수능</span>'환경과 에너지' 단원에서 수능형 그래프·자료 해석 문제의 예상 출제 패턴과 전략을 알려줘</div>
-          <div class="q-item" data-num="7"><span class="tag s">수능</span>2028 수능 통합과학 1등급을 위한 단원별 학습 우선순위와 고난도 예상 유형을 기출 근거로 분석해줘</div>
-          <div class="q-item" data-num="8"><span class="tag s">수능</span>현행 과학탐구 기출 중 2028 수능 통합과학 대비에 가장 유용한 단원과 문제 유형을 찾아서 정리해줘</div>
-          <div class="q-item" data-num="9"><span class="tag n">내신</span>고1 교과서 '물질의 전기적 특성' 단원에서 내신 서술형 예상 문제 5개와 단계별 채점 기준을 만들어줘</div>
-          <div class="q-item" data-num="10"><span class="tag n">내신</span>고1 내신 5등급제에서 실험 보고서형 서술 문제 출제 패턴과 고득점 답안 핵심 요소를 정리해줘</div>
-          <div class="q-item" data-num="11"><span class="tag n">내신</span>고1 통합과학 전 단원 핵심 개념을 플래시카드 40개로 만들어줘. 2028 수능 연계 중요도도 함께 표기해줘</div>
-          <div class="q-item" data-num="12"><span class="tag n">내신</span>고1 교과서 '생명 시스템' 단원의 내신 자료 해석형 문제 유형과 서술형 고득점 전략을 알려줘</div>
-          <div class="q-item" data-num="13"><span class="tag n">내신</span>고1 내신에서 수능형 자료가 변형 출제되는 패턴과 대비 방법을 예시로 설명해줘</div>
-          <div class="q-item" data-num="14"><span class="tag n">내신</span>고1 중간·기말 시험 대비 단원별 핵심 요약 슬라이드를 구성해줘. 객관식 20개, 서술형 5개 포함</div>
-          <div class="q-item" data-num="15"><span class="tag n">내신</span>고1 통합과학과 고3 물리학1·화학1·생명과학1의 연계 개념 맵을 만들어줘. 내신과 수능 동시 대비 학습 경로도 포함해줘</div>
+          <div class="q-item ok"  data-num="1"><span class="tag n">내신</span>업로드된 통합과학 교과서에서 단원별 핵심 개념을 찾아서 목록으로 정리해줘</div>
+          <div class="q-item ok"  data-num="2"><span class="tag n">내신</span>이 자료에서 '물질의 규칙성과 결합' 단원의 핵심 내용과 그림 자료를 찾아서 요약해줘</div>
+          <div class="q-item warn" data-num="3"><span class="tag s">수능</span>업로드된 자료에 통합과학 예시문항이 있다면 물리·화학·생물·지구과학 중 어떤 영역이 통합됐는지 찾아줘</div>
+          <div class="q-item ok"  data-num="4"><span class="tag n">내신</span>이 자료에서 통합과학 교과서의 실험 활동을 찾아서 단원별로 목록을 만들어줘</div>
+          <div class="q-item ok"  data-num="5"><span class="tag n">내신</span>업로드된 교과서에서 '생명 시스템' 단원의 핵심 개념과 그림 자료를 찾아서 요약해줘</div>
+          <div class="q-item ok"  data-num="6"><span class="tag warn">공통</span>이 자료에서 통합과학 교과서 내용과 과학탐구 기출이 연결되는 부분을 찾아서 비교해줘</div>
+          <div class="q-item ok"  data-num="7"><span class="tag n">내신</span>업로드된 통합과학 교과서에서 핵심 용어와 정의가 나온 부분을 찾아서 용어집으로 정리해줘</div>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <div class="section">
+        <div class="section-header hs">
+          <div class="section-name">📜 한국사</div>
+          <div class="section-sub">수능 절대평가 · 전학년 내신</div>
+          <div class="section-count">8문항</div>
+        </div>
+        <div class="q-grid" style="grid-template-columns:1fr">
+          <div class="q-item ok"  data-num="1"><span class="tag s">수능</span>업로드된 한국사 기출에서 사용된 자료(사진·문서·지도·그래프) 유형을 시대별로 분류해서 출처와 함께 정리해줘</div>
+          <div class="q-item ok"  data-num="2"><span class="tag s">수능</span>이 자료에서 '근현대사(개항기~현대)' 관련 기출 문제를 찾아서 시대순으로 출처와 함께 정리해줘</div>
+          <div class="q-item ok"  data-num="3"><span class="tag s">수능</span>업로드된 한국사 기출에서 가장 많이 사용된 사료 유형(문서·사진·지도)을 찾아서 출처와 함께 분류해줘</div>
+          <div class="q-item ok"  data-num="4"><span class="tag s">수능</span>이 자료에서 '조선 시대' 관련 기출을 찾아줘. 어떤 사건·제도·인물이 출제됐는지 출처와 함께 목록으로 정리해줘</div>
+          <div class="q-item ok"  data-num="5"><span class="tag s">수능</span>업로드된 수능특강 한국사에서 기출 문제와 연결되는 내용을 찾아줘. 어떤 단원이 연계되는지 정리해줘</div>
+          <div class="q-item ok"  data-num="6"><span class="tag n">내신</span>이 자료에서 한국사 교과서 '고려의 성립과 변천' 단원 내용을 찾아서 핵심 사건과 제도를 정리해줘</div>
+          <div class="q-item ok"  data-num="7"><span class="tag n">내신</span>업로드된 교과서에서 '일제강점기 독립운동' 관련 내용을 찾아서 주요 사건과 인물을 시간순으로 정리해줘</div>
+          <div class="q-item ok"  data-num="8"><span class="tag n">내신</span>이 자료에서 한국사 교과서 '현대사(광복~현재)' 단원의 핵심 사건과 연도를 찾아서 연표 형태로 정리해줘</div>
         </div>
       </div>
     </div>
@@ -730,184 +478,48 @@ body { font-family: var(--font); font-size: 9pt; color: #1a1a1a; background: #ff
 
   <hr class="divider">
 
-  <!-- 한국사 -->
-  <div class="section">
-    <div class="section-header hs">
-      <div class="section-name">📜 한국사</div>
-      <div class="section-sub">선사~현대 / 수능 절대평가 / 내신 전학년</div>
-      <div class="section-count">15문항</div>
-    </div>
-    <div class="q-grid wide">
-      <div class="q-item" data-num="1"><span class="tag s">수능</span>최근 10년 수능 한국사에서 가장 많이 출제된 시대별 빈도를 정리하고 2027 수능 예상 출제 포인트를 분석해줘</div>
-      <div class="q-item" data-num="2"><span class="tag s">수능</span>수능 한국사에서 '자료(사진·문서·지도)' 해석형 문제의 출제 패턴과 자료 유형별 정답 찾기 전략을 기출 근거로 정리해줘</div>
-      <div class="q-item" data-num="3"><span class="tag s">수능</span>수능 한국사 절대평가에서 1등급(50점 이상)을 안정적으로 받기 위한 단원별 학습 전략과 반드시 암기할 핵심 사건·연도를 정리해줘</div>
-      <div class="q-item" data-num="4"><span class="tag s">수능</span>수능 한국사에서 '근현대사(개항기~현대)' 단원이 출제되는 비중과 자주 나오는 자료 유형을 최근 5년 기출로 분석해줘</div>
-      <div class="q-item" data-num="5"><span class="tag s">수능</span>수능 한국사에서 학생들이 가장 많이 틀리는 문항 유형과 오답 패턴을 기출 근거로 분석하고 극복 전략을 알려줘</div>
-      <div class="q-item" data-num="6"><span class="tag s">수능</span>수능 한국사 단기간(1개월) 1등급 달성을 위한 단원별 우선순위와 효율적 학습법을 기출 출제 빈도 기반으로 알려줘</div>
-      <div class="q-item" data-num="7"><span class="tag s">수능</span>'조선 시대' 관련 문제의 최근 10년 출제 유형과 자료 해석 핵심 포인트를 정리해줘</div>
-      <div class="q-item" data-num="8"><span class="tag s">수능</span>수능 한국사 EBS 연계율을 고려한 수능특강·수능완성 핵심 단원과 실제 수능 출제 연계 사례를 분석해줘</div>
-      <div class="q-item" data-num="9"><span class="tag n">내신</span>고1 교과서 '고려의 성립과 변천' 단원에서 내신 서술형 예상 문제 5개와 모범 답안 구조를 만들어줘</div>
-      <div class="q-item" data-num="10"><span class="tag n">내신</span>고2 교과서 '일제강점기 독립운동' 단원의 내신 5등급제 기준 고난도 서술형 문제 5개와 채점 기준을 만들어줘</div>
-      <div class="q-item" data-num="11"><span class="tag n">내신</span>한국사 전 단원(선사~현대) 핵심 사건을 시대별 플래시카드 50개로 만들어줘. 수능 출제 빈도도 함께 표기해줘</div>
-      <div class="q-item" data-num="12"><span class="tag n">내신</span>고1·2 한국사 내신에서 자주 나오는 사료(문서·사진) 분석형 문제 유형과 고득점 서술 전략을 예시로 알려줘</div>
-      <div class="q-item" data-num="13"><span class="tag n">내신</span>고3 한국사 내신과 수능 절대평가를 동시에 대비하는 단원별 학습 전략과 시간 배분법을 알려줘</div>
-      <div class="q-item" data-num="14"><span class="tag n">내신</span>교과서 '현대사(광복~현재)' 단원에서 내신 논술형으로 자주 출제되는 주제와 논술 구조 작성법을 알려줘</div>
-      <div class="q-item" data-num="15"><span class="tag n">내신</span>고1 한국사 중간·기말 시험 대비 단원별 핵심 요약 보고서를 만들어줘. 수능 연계 중요도와 내신 서술 포인트 포함</div>
-    </div>
-  </div>
-
-  <hr class="divider">
-
-  <!-- 활용 팁 -->
-  <div class="tip-row">
-    <div class="tip-box warn">
-      <div class="tip-title">❌ 이렇게 묻지 마세요</div>
-      <div class="tip-body">
-        <code>"이 문제 답이 뭐야?"</code><br>
-        <code>"정답 알려줘"</code><br>
-        → 답을 바로 받으면 실력이 늘지 않아요
+  <!-- 핵심 원칙 요약 -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px">
+    <div style="background:#f0fff4;border:1px solid #b3e6c8;border-radius:6px;padding:7px 10px">
+      <div style="font-size:8pt;font-weight:700;color:#006d2e;margin-bottom:4px">✅ 이렇게 물어보세요</div>
+      <div style="font-size:7.5pt;color:#1a4a2a;line-height:1.7">
+        "이 자료에서 ~를 <strong>찾아줘</strong>"<br>
+        "업로드된 기출에서 ~를 <strong>정리해줘</strong>"<br>
+        "이 교과서에서 ~를 <strong>요약해줘</strong>"<br>
+        "~를 <strong>비교해줘</strong> (출처 포함)"
       </div>
     </div>
-    <div class="tip-box good">
-      <div class="tip-title">✅ 이렇게 물어보세요</div>
-      <div class="tip-body">
-        <code>"내가 틀린 이유가 뭔 것 같아?"</code><br>
-        <code>"이 유형 풀이 단계를 알려줘"</code><br>
-        → 스스로 생각하게 만드는 질문이 핵심
+    <div style="background:#fff0f0;border:1px solid #ffc8c8;border-radius:6px;padding:7px 10px">
+      <div style="font-size:8pt;font-weight:700;color:#c0001a;margin-bottom:4px">❌ 이런 질문은 피하세요</div>
+      <div style="font-size:7.5pt;color:#4a0000;line-height:1.7">
+        "풀이 전략을 <strong>만들어줘</strong>" (창작 불가)<br>
+        "1등급컷이 몇 점이야?" (통계 없음)<br>
+        "예상 문제를 <strong>출제해줘</strong>" (한계)<br>
+        "최신 뉴스·트렌드 알려줘" (업로드 밖)
       </div>
     </div>
-    <div class="tip-box note">
-      <div class="tip-title">📝 AI 답변 후 반드시 해야 할 것</div>
-      <div class="tip-body">
-        AI가 말한 내용을 <strong>내 말로</strong> 다시 노트에 써보기<br>
-        → 베껴 쓰지 말고, 이해한 내용을 스스로 표현해보기
+    <div style="background:#f0f4ff;border:1px solid #c8d5f0;border-radius:6px;padding:7px 10px">
+      <div style="font-size:8pt;font-weight:700;color:#1a3a6b;margin-bottom:4px">💡 답변 품질 높이는 팁</div>
+      <div style="font-size:7.5pt;color:#1a2a4a;line-height:1.7">
+        항상 "출처와 함께" 요청하기<br>
+        "이 자료에서만" 조건 명시하기<br>
+        과목·단원·연도 구체적으로 지정<br>
+        긴 질문보다 하나씩 단계별로 질문
       </div>
     </div>
   </div>
 
   <div class="page-footer">
-    <div class="footer-l">이든X학원 · 이든관리형학습센터 · AI 초격차 학습 시스템 · Gemini Notebook 활용 가이드 · 전체 105문항 (수능형 53 + 내신형 52)</div>
+    <div class="footer-l">이든X학원 · 이든관리형학습센터 · Gemini Notebook 활용 가이드 — 사실 기반 수정판 · 전체 105문항</div>
     <div class="legend">
+      <div class="legend-item"><div class="legend-bar" style="background:#4caf50"></div> 확실히 가능</div>
+      <div class="legend-item"><div class="legend-bar" style="background:#ff9800"></div> 자료 있으면 가능</div>
       <div class="legend-item"><div class="legend-dot" style="background:#ddeaff;border:1px solid #4a7cc9"></div> 수능형</div>
       <div class="legend-item"><div class="legend-dot" style="background:#dff5ec;border:1px solid #0f6e56"></div> 내신형</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f0e8ff;border:1px solid #9b7acc"></div> 공통</div>
     </div>
   </div>
 </div>
-  </div>
-</div>
 
-<script>
-const DB = {
-  "김도윤":"9aba92d3487e110e7aa2fdf5354aa2f12c4bbb05350d7734a8782314c4845ef3",
-  "김소이":"fb1ff6b4cd66b41f531052b7e816f446c91292db0414e2039d878827840ce79c",
-  "김예원":"45939660c8f5c35bc971f3ed7fc5703f30621598487c30ed9f95414db3ef30da",
-  "김용진":"107e77b441e78ecac845e14f35b5ff662525f814b00661e4a6982b34db512d2a",
-  "김유성":"3f6ff386d9cb529ea3568f2f83e0fdfffd843fdb44e7718f591b50d6216885df",
-  "김재진":"7c00ea3aa8581cfb318e357ff545bc434a162f9992a13a39921c8d1b95c6f69b",
-  "김정윤":"706d7fbba1d12a9a1d7a4b2280300d1527e5849d752d2a6c08b3af4ec75ab397",
-  "김진우":"3dcc7dc52b3d280dd3a311e14dee52d07c717ae2bc6c5427915c6d5c27d342bf",
-  "김채은":"130d9b8c9ec25016e5f05cc58980d7b15f423e0279591cae0c884dd09ae718c2",
-  "노주원":"83676d470a83048c1e055544a768d80c21d93ab8a403e54394372164502d44c9",
-  "민수연":"1390bd146e382332956bf6c327144a82556b88d2d444df6b24fc31292ae3dc3e",
-  "박민균":"c53287c86c50a889ed2d476b02483064365754d5a3424d7e44ec3aaeb95eba93",
-  "박서찬":"bf94a38fa9d4ab70a5b0cb59f072e3fc1689c58b3fa01873fa3e6f19f3b970ec",
-  "박주혁":"f6cc5cbb76e8f574215856da9682935223dc6fce300f20f404a8abdb588de684",
-  "박준혁":"a9e260b7637b6585774a547179eb72794f59b8038b26f49ebe5641667f2eb8ce",
-  "박준혁(H)":"3de8a8edab205e084457572f61874869ae88bc1fc2109c1fa52bab9173ef581c",
-  "박지후":"50f31d349bb32cf05b455e530cb8059532583affb3c0bf28e2360b7ecd32cb3a",
-  "백사라":"5d5907235046019fe4208a8f9ded1e3c4abafc62182264887e46ce0d947a467b",
-  "서진영":"fe344da6a149893d394b27be166f710a7826ee8c332dd851c7f46438080ca02b",
-  "손은지":"0fa4bb9f38389b711493168bee156c265a1672ac4a4399459aa34644128ee8e7",
-  "손지예":"24304dbc3715a1226da17fcef500a482c5ef549120fa4e10b15f24f5f3b44934",
-  "손태영":"7bc0c3167e9a0a80a31ecbcc6463a3a7bd53027e0cea3f0f1f3e92b872c93e34",
-  "송채은":"eb96e94d61103c17c80a8ebd2834ba5b9df522d37554118f2618d3d6cd641201",
-  "신준호":"5de9a20bd4df96996c8bc86022016db7085e2d545b8701a24cc6bbd957031346",
-  "예서영":"8471565a5074322e4dc98caf9cb29568eed4214b2d51098213abe537da1cf067",
-  "이다경":"652222b7bc6e309be7f9836b5cdc5ef986f044d2692400a6766ac2b932ae9659",
-  "이민욱":"70b7edce468460ffb129840e5cf46ccf6fe6736293d6f2ce6d6f1e8e902ea711",
-  "이서윤":"f19ada6ce4109137d5b9d667057a7fba30b11761af856c1282e58bdd26f2b78e",
-  "이성현":"9b3cf02ac105febb1dbde06af5fade4cff6b437a73f4a029fa057770dc60d279",
-  "이우진":"0a73b140020135069bc0b651656869faab1f4051c3aaeebb1cbf18025d50d0cd",
-  "이유림":"066d97d24715daf548f0a34b4b27d8546fb72c44c7204834cc218aa12905c7df",
-  "이윤재":"f6049634eae9cec258094dbb3da7bdb814fcf5dc176d21b718fb3cb56eff992a",
-  "이재훈":"338af3f70516a6a2e94dc86c3b836dc7b700829e34d6251bc90f67865b4c197c",
-  "임도윤":"8fbe140c56c5f4b76685601f077ab9070aa16eee9cce98280016141213d88e1d",
-  "장다연":"abe32689c0d56a0e6c265b855987a88560516cf44b7f72e8094a72504c432a79",
-  "장은서":"35f75d7e302ebdbe8d8468b645ed7bd4b9a879d232c352235528fe8e38460fa5",
-  "정가온":"57bdab2134ca2a4bed3a338db06052dd0cef54c013f72d296497a0708f27f369",
-  "정시헌":"8fe81b2cb78c8653f146116ed68990c20ffadb95d3651dbea3883122c69ab25d",
-  "조승훈":"e10bddd8fe954da0fffe5b071cd3ee90467b7145826418879eefba88bbbccec3",
-  "조현호":"760c2a7dbec68a4026ea633203c0be43ac18e940ba288f4c53b1a115113882ac",
-  "최라온":"4da2b24fc5895c5ebe27625cf73729ff37b1981a659184ac502a308868986f90",
-  "최시온":"e002dbabcc4dbecc36a1a9e3477413329233f8c9e4866e489c00192490d74563",
-  "최시은":"5be62b684481b0d6e3a3b8b524e562a16da29893d772ff4fbef0e458a69b6cd7",
-  "최윤":"391f268bf367b2b4d1c6ca892342230469e07fa93242a2884ee6f45610b70946",
-  "한승우":"fce2b011690ac1eb66130b2e1340f7b033bc76585a6273648e16274672652cc4",
-  "황혜암":"e064d1216d567bb92735547df79f9d2dc8f5b7b73b0968166b185d212e2f6bc3",
-  "양세인":"cf87d5e86ff004b8d96a2ace0687001ee2946b6e8532123c3e52905ce51b25f6"
-};
-const KEY = "eden_student_name";
-
-(function(){
-  const s = localStorage.getItem(KEY);
-  if (s && DB[s]) showPwOnly(s);
-  else setTimeout(function(){ document.getElementById("inp-name").focus(); }, 100);
-})();
-
-function showMsg(t,c){ const e=document.getElementById("l-msg"); e.textContent=t; e.className="l-msg "+c; }
-function clearMsg(){ const e=document.getElementById("l-msg"); e.className="l-msg"; e.textContent=""; }
-function setLoading(id,on){ const b=document.getElementById(id); b.disabled=on; b.textContent=on?"확인 중...":"입장하기"; }
-
-async function sha256(str){
-  const buf=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(str));
-  return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,"0"); }).join("");
-}
-async function verify(name,pw){
-  if(!DB[name]) return {ok:false,msg:"이름을 찾을 수 없습니다. 정확히 입력해주세요."};
-  if(DB[name]!==await sha256(pw)) return {ok:false,msg:"비밀번호가 틀렸습니다."};
-  return {ok:true};
-}
-
-function showPwOnly(name){
-  document.getElementById("sec-first").style.display="none";
-  document.getElementById("sec-pw").style.display="block";
-  document.getElementById("l-avatar").textContent=name.charAt(0);
-  document.getElementById("ret-name").textContent=name+" 학생";
-  setTimeout(function(){ document.getElementById("inp-pw2").focus(); },150);
-}
-function showGuide(name){
-  document.getElementById("login-screen").style.display="none";
-  document.getElementById("guide-screen").style.display="block";
-  document.getElementById("tb-avatar").textContent=name.charAt(0);
-  document.getElementById("tb-name").textContent=name+" 학생";
-  window.scrollTo(0,0);
-}
-
-async function doLogin(){
-  clearMsg();
-  const name=document.getElementById("inp-name").value.trim();
-  const pw=document.getElementById("inp-pw1").value.trim();
-  if(!name){ showMsg("❗ 이름을 입력해주세요.","err"); document.getElementById("inp-name").focus(); return; }
-  if(!pw){ showMsg("❗ 비밀번호를 입력해주세요.","err"); document.getElementById("inp-pw1").focus(); return; }
-  setLoading("btn-login1",true); showMsg("확인 중...","loading");
-  const res=await verify(name,pw);
-  setLoading("btn-login1",false);
-  if(res.ok){ localStorage.setItem(KEY,name); showGuide(name); }
-  else{ showMsg("❌ "+res.msg,"err"); document.getElementById("inp-pw1").value=""; document.getElementById("inp-pw1").focus(); }
-}
-async function doLoginReturn(){
-  clearMsg();
-  const name=localStorage.getItem(KEY);
-  const pw=document.getElementById("inp-pw2").value.trim();
-  if(!pw){ showMsg("❗ 비밀번호를 입력해주세요.","err"); return; }
-  setLoading("btn-login2",true); showMsg("확인 중...","loading");
-  const res=await verify(name,pw);
-  setLoading("btn-login2",false);
-  if(res.ok){ showGuide(name); }
-  else{ showMsg("❌ "+res.msg,"err"); document.getElementById("inp-pw2").value=""; document.getElementById("inp-pw2").focus(); }
-}
-function doLogout()   { localStorage.removeItem(KEY); location.reload(); }
-function switchFirst(){ localStorage.removeItem(KEY); location.reload(); }
-</script>
 </body>
 </html>
